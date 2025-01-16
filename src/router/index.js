@@ -3,9 +3,9 @@ import VueRouter from "vue-router";
 
 Vue.use(VueRouter)
 
-export const constantRoutes = [{path: '/', redirect: '/test', hidden: true}, {
-    path: '/test', name: 'Test', component: () => import('@/views/login')
-}]
+export const constantRoutes = [{path: '/', redirect: '/login', hidden: true}, {
+    path: '/login', name: 'Login', component: () => import('@/views/login'),
+}, {path: '/studentImport', name: 'StudentImport', component: () => import('@/views/studentImport')}]
 
 const createRouter = () => new VueRouter({
     routes: constantRoutes, mode: 'history'
