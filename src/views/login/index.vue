@@ -107,7 +107,7 @@ export default {
           if (res.data.hasNotLoginFlag) {
             this.updatePasswordTab()
           } else {
-            this.toStudentImport()
+            this.toStudentManagement()
           }
           this.$message.success("登录成功")
         } else {
@@ -138,7 +138,7 @@ export default {
         password: this.updatePasswordForm.password
       }).then((res) => {
         if (res.data.code === 200) {
-          this.toStudentImport()
+          this.toStudentManagement()
           this.$message.success("修改成功")
         } else {
           console.log(res)
@@ -166,8 +166,8 @@ export default {
       this.tabFlag = 2
     },
 
-    toStudentImport() {
-      this.$router.push("/studentImport")
+    toStudentManagement() {
+      this.$router.push("/studentManagement")
     }
   }
 }

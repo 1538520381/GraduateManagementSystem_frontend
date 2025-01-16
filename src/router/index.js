@@ -5,7 +5,7 @@ Vue.use(VueRouter)
 
 export const constantRoutes = [{path: '/', redirect: '/login', hidden: true}, {
     path: '/login', name: 'Login', component: () => import('@/views/login'),
-}, {path: '/studentImport', name: 'StudentImport', component: () => import('@/views/studentImport')}]
+}, {path: '/studentManagement', name: 'StudentManagement', component: () => import('@/views/studentManagement')}]
 
 const createRouter = () => new VueRouter({
     routes: constantRoutes, mode: 'history'
