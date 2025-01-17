@@ -40,3 +40,29 @@ export function studentSetType(setTypeForm) {
         }
     })
 }
+
+export function studentAdminLogin(adminLoginForm) {
+    return request({
+        url: '/student/adminLogin', method: 'POST', data: {
+            studentNumber: adminLoginForm.studentNumber, password: adminLoginForm.password
+        }
+    })
+}
+
+export function studentUpdatePassword(updatePasswordForm) {
+    return request({
+        url: '/student/updatePassword', method: 'PUT', data: {
+            password: updatePasswordForm.password
+        }
+    })
+}
+
+export function studentForgetPassword(forgetPasswordForm) {
+    return request({
+        url: '/student/forgetPassword', method: 'PUT', data: {
+            studentNumber: forgetPasswordForm.studentNumber,
+            idNumber: forgetPasswordForm.idNumber,
+            password: forgetPasswordForm.password
+        }
+    })
+}
