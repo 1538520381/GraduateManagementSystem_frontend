@@ -11,6 +11,10 @@
                     placeholder="姓名"></el-input>
           <el-input class="searchInput" v-model="queryPageForm.classNumber" prefix-icon="el-icon-search"
                     placeholder="班级号"></el-input>
+          <el-select class="searchInput" v-model="queryPageForm.type" placeholder="请选择类型" clearable>
+            <el-option v-for="item in typeOptions" :key="item.value" :label="item.label"
+                       :value="item.value"></el-option>
+          </el-select>
         </div>
         <div class="controlContainer">
           <el-button class="controlButton" type="primary" @click="queryPage">搜索</el-button>
@@ -30,10 +34,22 @@
             <el-table-column class="tableColumn" prop="name" label="姓名"></el-table-column>
             <el-table-column class="tableColumn" prop="classNumber" label="班级号"></el-table-column>
             <el-table-column class="tableColumn" prop="idNumber" label="身份证号（后六位）"></el-table-column>
+            <el-table-column class-name="tableColumn" prop="type" label="类型">
+              <template slot-scope="scope">
+                {{ scope.row.type === 0 ? '普通学生' : '学生管理员' }}
+              </template>
+            </el-table-column>
             <el-table-column class="tableColumn" fixed="right" label="操作">
               <template slot-scope="scope">
                 <el-popconfirm title="确定删除吗?" @confirm="deleteById(scope.row.id)">
                   <el-button style="color: #ff0000" type="text" size="small" slot="reference">删除</el-button>
+                </el-popconfirm>
+                <el-divider direction="vertical"></el-divider>
+                <el-button type="text" size="small" v-if="scope.row.type === 0" @click="setType(scope.row.id,1)">
+                  设为管理员
+                </el-button>
+                <el-popconfirm title="确定取消管理员吗?" @confirm="setType(scope.row.id,0)" v-else>
+                  <el-button type="text" size="small" slot="reference">取消管理员</el-button>
                 </el-popconfirm>
               </template>
             </el-table-column>
@@ -56,7 +72,7 @@ import Header from "@/components/header/index.vue";
 
 import * as XLSX from "xlsx";
 import {isEmpty} from "@/utils/common";
-import {studentAddList, studentDeleteById, studentDeleteByIds, studentQueryPage} from "@/apis/student";
+import {studentAddList, studentDeleteById, studentDeleteByIds, studentQueryPage, studentSetType} from "@/apis/student";
 
 export default {
   name: 'studentManagement',
@@ -72,7 +88,18 @@ export default {
 
       page: 0,
       pageSize: 5,
-      total: 0
+      total: 0,
+
+      typeOptions: [
+        {
+          value: 0,
+          label: '普通学生'
+        },
+        {
+          value: 1,
+          label: '学生管理员'
+        }
+      ]
     }
   },
   created() {
@@ -85,6 +112,7 @@ export default {
         studentNumber: null,
         name: null,
         classNumber: null,
+        type: null,
       }
     },
 
@@ -93,6 +121,7 @@ export default {
         studentNumber: isEmpty(this.queryPageForm.studentNumber) ? null : this.queryPageForm.studentNumber.trim(),
         name: isEmpty(this.queryPageForm.name) ? null : this.queryPageForm.name.trim(),
         classNumber: isEmpty(this.queryPageForm.classNumber) ? null : this.queryPageForm.classNumber.trim(),
+        type: isEmpty(this.queryPageForm.type) ? null : this.queryPageForm.type,
         page: this.page,
         pageSize: this.pageSize
       }).then((res) => {
@@ -243,6 +272,23 @@ export default {
         if (res.data.code === 200) {
           this.queryPage()
           this.$message.success("删除成功")
+        } else {
+          console.log(res)
+          this.$message.error(res.data.msg)
+        }
+      }).catch((err) => {
+        console.log(err)
+        this.$message.error("服务器异常，请联系管理员")
+      })
+    },
+    setType(id, type) {
+      studentSetType({
+        id: id,
+        type: type
+      }).then((res) => {
+        if (res.data.code === 200) {
+          this.queryPage()
+          this.$message.success("修改成功")
         } else {
           console.log(res)
           this.$message.error(res.data.msg)

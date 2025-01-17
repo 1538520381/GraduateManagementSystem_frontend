@@ -14,6 +14,7 @@ export function studentQueryPage(queryPageForm) {
             studentNumber: queryPageForm.studentNumber,
             name: queryPageForm.name,
             classNumber: queryPageForm.classNumber,
+            type: queryPageForm.type,
             page: queryPageForm.page,
             pageSize: queryPageForm.pageSize
         }
@@ -29,5 +30,13 @@ export function studentDeleteById(deleteByIdForm) {
 export function studentDeleteByIds(deleteByIdsForm) {
     return request({
         url: '/student/deleteByIds/' + deleteByIdsForm.ids, method: 'DELETE'
+    })
+}
+
+export function studentSetType(setTypeForm) {
+    return request({
+        url: '/student/setType', method: 'PUT', data: {
+            id: setTypeForm.id, type: setTypeForm.type
+        }
     })
 }
