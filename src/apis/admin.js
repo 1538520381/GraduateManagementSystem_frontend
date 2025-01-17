@@ -15,3 +15,12 @@ export function adminUpdatePassword(updatePasswordForm) {
         }
     })
 }
+
+export function adminGetAdminByToken() {
+    return request({
+        url: '/admin/getAdminByToken', method: 'GET'
+    })
+}
+
+export class adminGetByToken {
+}

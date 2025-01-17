@@ -1,9 +1,13 @@
 <template>
   <div id="sidebarMenu">
     <el-menu class="menu" :default-active="active">
-      <el-menu-item class="menuItem" index="0">
+      <el-menu-item class="menuItem" index="0" v-if="userType === 'admin'">
         <i class="el-icon-menu"></i>
         <span slot="title">学生管理</span>
+      </el-menu-item>
+      <el-menu-item class="menuItem" index="0" v-if="userType === 'student'">
+        <i class="el-icon-menu"></i>
+        <span slot="title">组员管理</span>
       </el-menu-item>
     </el-menu>
   </div>
@@ -13,8 +17,10 @@
 export default {
   name: 'SidebarMenu',
   props: {
-    active: String
-  }
+    userType: String,
+
+    active: String,
+  },
 }
 </script>
 

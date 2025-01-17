@@ -1,8 +1,8 @@
 <template>
-  <div id="studentImport">
+  <div id="studentManagement">
     <Header></Header>
     <div class="middle">
-      <SidebarMenu active="0"></SidebarMenu>
+      <SidebarMenu active="0" userType="admin"></SidebarMenu>
       <div class="main">
         <div class="searchContainer">
           <el-input class="searchInput" v-model="queryPageForm.studentNumber" prefix-icon="el-icon-search"
@@ -73,6 +73,7 @@ import Header from "@/components/header/index.vue";
 import * as XLSX from "xlsx";
 import {isEmpty} from "@/utils/common";
 import {studentAddList, studentDeleteById, studentDeleteByIds, studentQueryPage, studentSetType} from "@/apis/student";
+import {adminGetAdminByToken} from "@/apis/admin";
 
 export default {
   name: 'studentManagement',
@@ -82,6 +83,8 @@ export default {
   },
   data() {
     return {
+      admin: null,
+
       studentList: [],
 
       queryPageForm: {},
@@ -102,7 +105,9 @@ export default {
       ]
     }
   },
-  created() {
+  async created() {
+    await this.getAdminByToken()
+
     this.initQueryPageForm()
     this.queryPage()
   },
@@ -116,6 +121,20 @@ export default {
       }
     },
 
+    getAdminByToken() {
+      return adminGetAdminByToken().then((res) => {
+        if (res.data.code === 200) {
+          this.admin = res.data.admin
+        } else {
+          console.log(res)
+          this.$message.error(res.data.msg)
+          this.toLogin()
+        }
+      }).catch((err) => {
+        console.log(err)
+        this.$message.error("服务器异常，请联系管理员")
+      })
+    },
     queryPage() {
       studentQueryPage({
         studentNumber: isEmpty(this.queryPageForm.studentNumber) ? null : this.queryPageForm.studentNumber.trim(),
@@ -311,12 +330,16 @@ export default {
       a.click();
     },
 
+    toLogin() {
+      this.$router.push("/login")
+    }
+
   }
 }
 </script>
 
 <style scoped>
-#studentImport {
+#studentManagement {
   display: flex;
 
   flex-flow: column;
@@ -325,7 +348,7 @@ export default {
   height: 100%;
 }
 
-#studentImport .middle {
+#studentManagement .middle {
   display: flex;
 
   flex-flow: row;
@@ -333,31 +356,31 @@ export default {
   flex: 1;
 }
 
-#studentImport .main {
+#studentManagement .main {
   flex: 1;
 
   height: 100%;
 }
 
-#studentImport .main .searchContainer {
+#studentManagement .main .searchContainer {
   width: 100%;
 }
 
-#studentImport .main .searchContainer .searchInput {
+#studentManagement .main .searchContainer .searchInput {
   margin: 20px 0 0 20px;
 
   width: 200px;
 }
 
-#studentImport .main .controlContainer .controlButton {
+#studentManagement .main .controlContainer .controlButton {
   margin: 10px 0 0 20px;
 }
 
-#studentImport .main .tableContainer {
+#studentManagement .main .tableContainer {
   text-align: center;
 }
 
-#studentImport .main .tableContainer .table {
+#studentManagement .main .tableContainer .table {
   margin: 0 auto 0 auto;
 
   width: 90%;
