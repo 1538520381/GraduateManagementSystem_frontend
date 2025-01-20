@@ -66,3 +66,29 @@ export function studentForgetPassword(forgetPasswordForm) {
         }
     })
 }
+
+export function studentQueryStudentListByClassNumberWithStudentAdmin(queryStudentListByClassNumberWithStudentAdminForm) {
+    return request({
+        url: '/student/queryStudentListByClassNumberWithStudentAdmin', method: 'GET', params: {
+            studentNumber: queryStudentListByClassNumberWithStudentAdminForm.studentNumber,
+            name: queryStudentListByClassNumberWithStudentAdminForm.name,
+            classNumber: queryStudentListByClassNumberWithStudentAdminForm.classNumber,
+        }
+    })
+}
+
+export function studentGetStudentByToken() {
+    return request({
+        url: '/student/getStudentByToken', method: 'GET'
+    })
+}
+
+export function studentQueryListByStudentAdminId(queryListByStudentAdminIdForm) {
+    return request({
+        url: '/student/queryListByStudentAdminId', method: 'GET', params: {
+            studentNumber: queryListByStudentAdminIdForm.studentNumber,
+            name: queryListByStudentAdminIdForm.name,
+            studentAdminId: queryListByStudentAdminIdForm.studentAdminId
+        }
+    })
+}

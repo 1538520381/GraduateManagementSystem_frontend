@@ -2,7 +2,7 @@
   <div id="studentManagement">
     <Header></Header>
     <div class="middle">
-      <SidebarMenu active="0" userType="admin"></SidebarMenu>
+      <SidebarMenu userType="admin" active="0"></SidebarMenu>
       <div class="main">
         <div class="searchContainer">
           <el-input class="searchInput" v-model="queryPageForm.studentNumber" prefix-icon="el-icon-search"
@@ -28,7 +28,7 @@
           </el-popconfirm>
         </div>
         <div class="tableContainer">
-          <el-table class="table" ref="table" :data="studentList">
+          <el-table class="table" ref="table" :data="studentList" empty-text="暂无学生">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column class="tableColumn" prop="studentNumber" label="学号"></el-table-column>
             <el-table-column class="tableColumn" prop="name" label="姓名"></el-table-column>
@@ -333,7 +333,6 @@ export default {
     toLogin() {
       this.$router.push("/login")
     }
-
   }
 }
 </script>
@@ -354,33 +353,37 @@ export default {
   flex-flow: row;
 
   flex: 1;
+
+  width: 100%;
+  height: 0;
 }
 
-#studentManagement .main {
+#studentManagement .middle .main {
   flex: 1;
 
+  width: 0;
   height: 100%;
 }
 
-#studentManagement .main .searchContainer {
+#studentManagement .middle .main .searchContainer {
   width: 100%;
 }
 
-#studentManagement .main .searchContainer .searchInput {
+#studentManagement .middle .main .searchContainer .searchInput {
   margin: 20px 0 0 20px;
 
   width: 200px;
 }
 
-#studentManagement .main .controlContainer .controlButton {
+#studentManagement .middle .main .controlContainer .controlButton {
   margin: 10px 0 0 20px;
 }
 
-#studentManagement .main .tableContainer {
+#studentManagement .middle .main .tableContainer {
   text-align: center;
 }
 
-#studentManagement .main .tableContainer .table {
+#studentManagement .middle .main .tableContainer .table {
   margin: 0 auto 0 auto;
 
   width: 90%;

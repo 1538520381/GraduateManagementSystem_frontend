@@ -5,7 +5,7 @@
         <i class="el-icon-menu"></i>
         <span slot="title">学生管理</span>
       </el-menu-item>
-      <el-menu-item class="menuItem" index="0" v-if="userType === 'student'">
+      <el-menu-item class="menuItem" index="0" v-if="userType === 'studentAdmin'">
         <i class="el-icon-menu"></i>
         <span slot="title">组员管理</span>
       </el-menu-item>
