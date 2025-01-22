@@ -1,14 +1,13 @@
 <template>
   <div id="sidebarMenu">
     <el-menu class="menu" :default-active="active">
-      <el-menu-item class="menuItem" index="0" v-if="userType === 'admin'">
-        <i class="el-icon-menu"></i>
-        <span slot="title">学生管理</span>
-      </el-menu-item>
-      <el-menu-item class="menuItem" index="0" v-if="userType === 'studentAdmin'">
-        <i class="el-icon-menu"></i>
-        <span slot="title">组员管理</span>
-      </el-menu-item>
+      <template v-for="(item,index) in menuItems">
+        <el-menu-item class="menuItem" :index="item.index"
+                      v-if="userType === item.userType" @click="toUrl(item.url)">
+          <i class="el-icon-menu"></i>
+          <span slot="title">{{ item.title }}</span>
+        </el-menu-item>
+      </template>
     </el-menu>
   </div>
 </template>
@@ -21,6 +20,36 @@ export default {
 
     active: String,
   },
+  data() {
+    return {
+      menuItems: [
+        {
+          title: '学生管理',
+          index: '0',
+          userType: 'admin',
+          url: '/studentManagement'
+        },
+        {
+          title: '学生状态记录',
+          index: '1',
+          userType: 'admin',
+          url: '/studentStatusRecord'
+        },
+
+        {
+          title: '组员管理',
+          index: '0',
+          userType: 'studentAdmin',
+          url: '/teamMemberManagement'
+        },
+      ]
+    }
+  },
+  methods: {
+    toUrl(url) {
+      this.$router.push(url)
+    }
+  }
 }
 </script>
 
@@ -30,6 +59,11 @@ export default {
   height: 100%;
 
   background: #F0F9FD;
+}
+
+#sidebarMenu .menu {
+  width: 100%;
+  height: 100%;
 }
 
 #sidebarMenu .menu .menuItem:hover {

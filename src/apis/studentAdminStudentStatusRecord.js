@@ -14,3 +14,10 @@ export function studentAdminStudentStatusRecordUpdate(studentAdminStudentStatusR
         }
     })
 }
+
+export function studentAdminStudentStatusRecordGetStudentAdminStudentStatusRecordByStudentIdToNowWithStudentAdminStudentStatusRecordDate(getStudentAdminStudentStatusRecordByStudentIdToNowWithStudentAdminStudentStatusRecordDateForm) {
+    return request({
+        url: '/studentAdminStudentStatusRecord/getStudentAdminStudentStatusRecordByStudentIdToNowWithStudentAdminStudentStatusRecordDate/' + getStudentAdminStudentStatusRecordByStudentIdToNowWithStudentAdminStudentStatusRecordDateForm.studentId,
+        method: 'GET'
+    })
+}
