@@ -8,15 +8,15 @@ export function studentAddList(addListForm) {
     })
 }
 
-export function studentQueryPage(queryPageForm) {
+export function studentQueryPageWithStudentAdmin(queryPageWithStudentAdminForm) {
     return request({
-        url: '/student/queryPage', method: 'GET', params: {
-            studentNumber: queryPageForm.studentNumber,
-            name: queryPageForm.name,
-            classNumber: queryPageForm.classNumber,
-            type: queryPageForm.type,
-            page: queryPageForm.page,
-            pageSize: queryPageForm.pageSize
+        url: '/student/queryPageWithStudentAdmin', method: 'GET', params: {
+            studentNumber: queryPageWithStudentAdminForm.studentNumber,
+            name: queryPageWithStudentAdminForm.name,
+            classNumber: queryPageWithStudentAdminForm.classNumber,
+            type: queryPageWithStudentAdminForm.type,
+            page: queryPageWithStudentAdminForm.page,
+            pageSize: queryPageWithStudentAdminForm.pageSize
         }
     })
 }

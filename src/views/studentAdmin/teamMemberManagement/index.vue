@@ -14,7 +14,7 @@
           <el-button class="controlButton" type="primary" @click="queryStudentListByStudentAdminId">搜索</el-button>
           <el-button class="controlButton" type="primary" @click="openTeamMemberSelectionDialog">选择组员</el-button>
         </div>
-        <div class="tableContainer">
+        <el-scrollbar class="tableContainer">
           <el-table class="table" :data="studentList" empty-text="暂无学生">
             <el-table-column class="tableColumn" prop="studentNumber" label="学号"></el-table-column>
             <el-table-column class="tableColumn" prop="name" label="姓名"></el-table-column>
@@ -32,7 +32,7 @@
               </template>
             </el-table-column>
           </el-table>
-        </div>
+        </el-scrollbar>
       </div>
     </div>
 
@@ -444,6 +444,10 @@ export default {
 }
 
 #teamMemberManagement .middle .main {
+  display: flex;
+
+  flex-flow: column;
+
   flex: 1;
 
   width: 0;
@@ -465,7 +469,14 @@ export default {
 }
 
 #teamMemberManagement .middle .main .tableContainer {
+  flex: 1;
 
+  width: 100%;
+  height: 0;
+}
+
+#teamMemberManagement .middle .main .tableContainer /deep/ .el-scrollbar__wrap {
+  overflow-x: hidden;
 }
 
 #teamMemberManagement .middle .main .tableContainer .table {

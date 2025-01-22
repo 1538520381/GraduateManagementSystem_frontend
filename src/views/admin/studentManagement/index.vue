@@ -34,9 +34,14 @@
             <el-table-column class="tableColumn" prop="name" label="姓名"></el-table-column>
             <el-table-column class="tableColumn" prop="classNumber" label="班级号"></el-table-column>
             <el-table-column class="tableColumn" prop="idNumber" label="身份证号（后六位）"></el-table-column>
-            <el-table-column class-name="tableColumn" prop="type" label="类型">
+            <el-table-column class="tableColumn" prop="type" label="类型">
               <template slot-scope="scope">
                 {{ scope.row.type === 0 ? '普通学生' : '学生管理员' }}
+              </template>
+            </el-table-column>
+            <el-table-column class="tableColumn" label="所属管理员">
+              <template slot-scope="scope">
+                {{ isEmpty(scope.row.studentAdmin) ? '暂无分组' : scope.row.studentAdmin.name }}
               </template>
             </el-table-column>
             <el-table-column class="tableColumn" fixed="right" label="操作">
@@ -72,7 +77,7 @@ import Header from "@/components/header/index.vue";
 
 import * as XLSX from "xlsx";
 import {isEmpty} from "@/utils/common";
-import {studentAddList, studentDeleteById, studentDeleteByIds, studentQueryPage, studentSetType} from "@/apis/student";
+import {studentAddList, studentDeleteById, studentDeleteByIds, studentQueryPageWithStudentAdmin, studentSetType} from "@/apis/student";
 import {adminGetAdminByToken} from "@/apis/admin";
 
 export default {
@@ -112,6 +117,7 @@ export default {
     this.queryPage()
   },
   methods: {
+    isEmpty,
     initQueryPageForm() {
       this.queryPageForm = {
         studentNumber: null,
@@ -136,7 +142,7 @@ export default {
       })
     },
     queryPage() {
-      studentQueryPage({
+      studentQueryPageWithStudentAdmin({
         studentNumber: isEmpty(this.queryPageForm.studentNumber) ? null : this.queryPageForm.studentNumber.trim(),
         name: isEmpty(this.queryPageForm.name) ? null : this.queryPageForm.name.trim(),
         classNumber: isEmpty(this.queryPageForm.classNumber) ? null : this.queryPageForm.classNumber.trim(),

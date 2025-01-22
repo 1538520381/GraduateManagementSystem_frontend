@@ -32,6 +32,11 @@
                   {{ scope.row.type === 0 ? '普通学生' : '学生管理员' }}
                 </template>
               </el-table-column>
+              <el-table-column class="tableColumn" label="所属管理员">
+                <template slot-scope="scope">
+                  {{ isEmpty(scope.row.studentAdmin) ? '暂无分组' : scope.row.studentAdmin.name }}
+                </template>
+              </el-table-column>
               <el-table-column class="tableColumn" fixed="right" label="操作">
                 <template slot-scope="scope">
                   <el-button type="text" size="small" @click="selectStudentStatusRecord(scope.row)">
@@ -106,7 +111,7 @@ import SidebarMenu from "@/components/sidebarMenu/index.vue";
 import Header from "@/components/header/index.vue";
 
 import {formatTimestamp, isEmpty} from "@/utils/common";
-import {studentQueryPage} from "@/apis/student";
+import {studentQueryPageWithStudentAdmin} from "@/apis/student";
 import {adminGetAdminByToken} from "@/apis/admin";
 import {
   studentAdminStudentStatusRecordGetStudentAdminStudentStatusRecordByStudentIdToNowWithStudentAdminStudentStatusRecordDate
@@ -182,7 +187,7 @@ export default {
       })
     },
     queryPage() {
-      studentQueryPage({
+      studentQueryPageWithStudentAdmin({
         studentNumber: isEmpty(this.queryPageForm.studentNumber) ? null : this.queryPageForm.studentNumber.trim(),
         name: isEmpty(this.queryPageForm.name) ? null : this.queryPageForm.name.trim(),
         classNumber: isEmpty(this.queryPageForm.classNumber) ? null : this.queryPageForm.classNumber.trim(),
