@@ -30,9 +30,9 @@
         <div class="tableContainer">
           <el-table class="table" ref="table" :data="studentList" empty-text="暂无学生">
             <el-table-column type="selection" width="55"></el-table-column>
+            <el-table-column class="tableColumn" prop="classNumber" label="班级号"></el-table-column>
             <el-table-column class="tableColumn" prop="studentNumber" label="学号"></el-table-column>
             <el-table-column class="tableColumn" prop="name" label="姓名"></el-table-column>
-            <el-table-column class="tableColumn" prop="classNumber" label="班级号"></el-table-column>
             <el-table-column class="tableColumn" prop="idNumber" label="身份证号（后六位）"></el-table-column>
             <el-table-column class="tableColumn" prop="type" label="类型">
               <template slot-scope="scope">
@@ -77,7 +77,13 @@ import Header from "@/components/header/index.vue";
 
 import * as XLSX from "xlsx";
 import {isEmpty} from "@/utils/common";
-import {studentAddList, studentDeleteById, studentDeleteByIds, studentQueryPageWithStudentAdmin, studentSetType} from "@/apis/student";
+import {
+  studentAddList,
+  studentDeleteById,
+  studentDeleteByIds,
+  studentQueryPageWithStudentAdmin,
+  studentSetType
+} from "@/apis/student";
 import {adminGetAdminByToken} from "@/apis/admin";
 
 export default {

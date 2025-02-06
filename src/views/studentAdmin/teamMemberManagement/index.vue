@@ -16,9 +16,9 @@
         </div>
         <el-scrollbar class="tableContainer">
           <el-table class="table" :data="studentList" empty-text="暂无学生">
+            <el-table-column class="tableColumn" prop="classNumber" label="班级号"></el-table-column>
             <el-table-column class="tableColumn" prop="studentNumber" label="学号"></el-table-column>
             <el-table-column class="tableColumn" prop="name" label="姓名"></el-table-column>
-            <el-table-column class="tableColumn" prop="classNumber" label="班级号"></el-table-column>
             <el-table-column class="tableColumn" fixed="right" label="操作">
               <template slot-scope="scope">
                 <el-button type="text" size="small" @click="openStudentStatusRecordDialog(scope.row)">学生状态记录

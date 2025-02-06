@@ -2,7 +2,7 @@
   <div id="studentStatusRecord">
     <Header></Header>
     <div class="middle">
-      <SidebarMenu userType="admin" active="1"></SidebarMenu>
+      <SidebarMenu userType="admin" active="2"></SidebarMenu>
       <div class="studentTable" v-if="studentTableFlag">
         <div class="main">
           <div class="searchContainer">
@@ -23,9 +23,9 @@
           <div class="tableContainer">
             <el-table class="table" ref="table" :data="studentList" empty-text="暂无学生">
               <el-table-column type="selection" width="55"></el-table-column>
+              <el-table-column class="tableColumn" prop="classNumber" label="班级号"></el-table-column>
               <el-table-column class="tableColumn" prop="studentNumber" label="学号"></el-table-column>
               <el-table-column class="tableColumn" prop="name" label="姓名"></el-table-column>
-              <el-table-column class="tableColumn" prop="classNumber" label="班级号"></el-table-column>
               <el-table-column class="tableColumn" prop="idNumber" label="身份证号（后六位）"></el-table-column>
               <el-table-column class-name="tableColumn" prop="type" label="类型">
                 <template slot-scope="scope">
