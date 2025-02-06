@@ -73,7 +73,8 @@
       </div>
     </el-dialog>
 
-    <el-dialog class="studentStatusRecordDialog" title="学生状态记录" :visible.sync="studentStatusRecordDialogVis"
+    <el-dialog class="studentStatusRecordDialog" title="学生状态记录"
+               :visible.sync="studentStatusRecordDialogVis"
                :close-on-click-modal="false" width="600px">
       <el-form class="studentStatusRecordForm"
                v-if="!isEmpty(studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate)">
@@ -108,14 +109,14 @@
                       label-width="150px">
           <el-input class="studentStatusRecordFormInput"
                     v-model="studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.leavingSchoolReason"
-                    type="textarea" maxlength="500" placeholder="该生离校原因及去向（上限500字）"></el-input>
+                    type="textarea" maxlength="500" placeholder="该生离校原因（上限500字）"></el-input>
         </el-form-item>
         <el-form-item class="studentStatusRecordFormItem" label="离校去向"
                       v-if="studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.onCampusFlag === false"
                       label-width="150px">
           <el-input class="studentStatusRecordFormInput"
                     v-model="studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.leavingSchoolDestination"
-                    type="textarea" maxlength="500" placeholder="该生离校原因及去向（上限500字）"></el-input>
+                    type="textarea" maxlength="500" placeholder="该生离校去向（上限500字）"></el-input>
         </el-form-item>
         <el-form-item class="studentStatusRecordFormItem" label="科研进展情况" label-width="150px">
           <el-input class="studentStatusRecordFormInput"
@@ -161,7 +162,10 @@ import {
 import {
   studentAdminStudentStatusRecordDateGetByNowTimeWithStudentAdminStudentStatusRecordByStudentId
 } from "@/apis/studentAdminStudentStatusRecordDate";
-import {studentAdminStudentStatusRecordUpdate} from "@/apis/studentAdminStudentStatusRecord";
+import {
+  studentAdminStudentStatusRecordGetLastUpdateTimeByStudentId,
+  studentAdminStudentStatusRecordUpdate
+} from "@/apis/studentAdminStudentStatusRecord";
 
 export default {
   name: 'TeamMemberManagement',
@@ -182,9 +186,24 @@ export default {
       studentStatusRecordDialogVis: false,
       studentStatusRecordDialogData: {
         studentStatusRecordForm: {
-          student: {},
-          studentAdminStudentStatusRecordDate: {},
-          studentAdminStudentStatusRecord: {}
+          student: {
+            id: null,
+            studentNumber: null,
+            name: null,
+          },
+          studentAdminStudentStatusRecordDate: {
+            id: null,
+            startTime: null,
+            endTime: null
+          },
+          studentAdminStudentStatusRecord: {
+            onCampusFlag: null,
+            leavingSchoolReason: '',
+            leavingSchoolDestination: '',
+            scientificResearchProgress: '',
+            personalityTraits: '',
+            abnormalIssues: '',
+          }
         },
       }
     }
@@ -226,11 +245,11 @@ export default {
         },
         studentAdminStudentStatusRecord: {
           onCampusFlag: null,
-          leavingSchoolReason: null,
-          leavingSchoolDestination: null,
-          scientificResearchProgress: null,
-          personalityTraits: null,
-          abnormalIssues: null,
+          leavingSchoolReason: '',
+          leavingSchoolDestination: '',
+          scientificResearchProgress: '',
+          personalityTraits: '',
+          abnormalIssues: '',
         }
       }
     },
@@ -337,7 +356,6 @@ export default {
           this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.endTime = res.data.studentAdminStudentStatusRecordDate.endTime
 
           if (isEmpty(res.data.studentAdminStudentStatusRecord)) {
-            this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord = {}
             return
           }
           this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.onCampusFlag = res.data.studentAdminStudentStatusRecord.onCampusFlag
@@ -420,7 +438,29 @@ export default {
 
       this.getByNowTimeWithStudentAdminStudentStatusRecordByStudentId(this.studentStatusRecordDialogData.studentStatusRecordForm.student.id)
 
-      this.studentStatusRecordDialogVis = true
+      studentAdminStudentStatusRecordGetLastUpdateTimeByStudentId({
+        studentId: item.id,
+      }).then((res) => {
+        if (res.data.code === 200) {
+          if (!isEmpty(res.data.studentAdminStudentStatusRecord)) {
+            console.log(JSON.stringify(this.studentStatusRecordDialogData))
+            this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.scientificResearchProgress = res.data.studentAdminStudentStatusRecord.scientificResearchProgress
+            console.log(JSON.stringify(this.studentStatusRecordDialogData))
+            this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.personalityTraits = res.data.studentAdminStudentStatusRecord.personalityTraits
+            console.log(JSON.stringify(this.studentStatusRecordDialogData))
+          }
+        } else {
+          console.log(res)
+          this.$message.error(res.data.msg)
+        }
+      }).catch((err) => {
+        console.log(err)
+        this.$message.error("服务器异常，请联系管理员")
+      })
+      this.$nextTick(() => {
+        this.studentStatusRecordDialogVis = true
+      })
+
     },
     closeStudentStatusRecordDialog() {
       this.studentStatusRecordDialogVis = false

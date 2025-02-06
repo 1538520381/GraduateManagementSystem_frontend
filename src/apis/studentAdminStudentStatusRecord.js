@@ -22,3 +22,10 @@ export function studentAdminStudentStatusRecordGetStudentAdminStudentStatusRecor
         method: 'GET'
     })
 }
+
+export function studentAdminStudentStatusRecordGetLastUpdateTimeByStudentId(getLastUpdateTimeByStudentIdForm) {
+    return request({
+        url: '/studentAdminStudentStatusRecord/getLastUpdateTimeByStudentId/' + getLastUpdateTimeByStudentIdForm.studentId,
+        method: 'GET'
+    })
+}
