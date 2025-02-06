@@ -21,6 +21,3 @@ export function adminGetAdminByToken() {
         url: '/admin/getAdminByToken', method: 'GET'
     })
 }
-
-export class adminGetByToken {
-}

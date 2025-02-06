@@ -92,3 +92,9 @@ export function studentQueryListByStudentAdminId(queryListByStudentAdminIdForm) 
         }
     })
 }
+
+export function studentGetClassNumberListOfStudentAdmin() {
+    return request({
+        url: '/student/getClassNumberListOfStudentAdmin', method: 'GET'
+    })
+}

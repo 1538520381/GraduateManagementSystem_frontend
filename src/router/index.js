@@ -8,6 +8,8 @@ export const constantRoutes = [{path: '/', redirect: '/login', hidden: true}, {
 }, {
     path: '/studentManagement', name: 'StudentManagement', component: () => import('@/views/admin/studentManagement')
 }, {
+    path: '/studentAdminManagement', name: 'StudentAdminManagement', component: () => import('@/views/admin/studentAdminManagement')
+}, {
     path: '/studentStatusRecord',
     name: 'StudentStatusRecord',
     component: () => import('@/views/admin/studentStatusRecord')

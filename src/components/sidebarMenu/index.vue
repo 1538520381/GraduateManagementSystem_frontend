@@ -30,8 +30,14 @@ export default {
           url: '/studentManagement'
         },
         {
-          title: '学生状态记录',
+          title: '学生管理员管理',
           index: '1',
+          userType: 'admin',
+          url: '/studentAdminManagement'
+        },
+        {
+          title: '学生状态记录',
+          index: '2',
           userType: 'admin',
           url: '/studentStatusRecord'
         },
@@ -47,7 +53,9 @@ export default {
   },
   methods: {
     toUrl(url) {
-      this.$router.push(url)
+      if (window.location.pathname !== url) {
+        this.$router.push(url)
+      }
     }
   }
 }
