@@ -103,11 +103,18 @@
               :label="false">否
           </el-radio>
         </el-form-item>
-        <el-form-item class="studentStatusRecordFormItem" label="离校原因及去向"
+        <el-form-item class="studentStatusRecordFormItem" label="离校原因"
                       v-if="studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.onCampusFlag === false"
                       label-width="150px">
           <el-input class="studentStatusRecordFormInput"
-                    v-model="studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.leavingSchoolDetails"
+                    v-model="studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.leavingSchoolReason"
+                    type="textarea" maxlength="500" placeholder="该生离校原因及去向（上限500字）"></el-input>
+        </el-form-item>
+        <el-form-item class="studentStatusRecordFormItem" label="离校去向"
+                      v-if="studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.onCampusFlag === false"
+                      label-width="150px">
+          <el-input class="studentStatusRecordFormInput"
+                    v-model="studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.leavingSchoolDestination"
                     type="textarea" maxlength="500" placeholder="该生离校原因及去向（上限500字）"></el-input>
         </el-form-item>
         <el-form-item class="studentStatusRecordFormItem" label="科研进展情况" label-width="150px">
@@ -219,7 +226,8 @@ export default {
         },
         studentAdminStudentStatusRecord: {
           onCampusFlag: null,
-          leavingSchoolDetails: null,
+          leavingSchoolReason: null,
+          leavingSchoolDestination: null,
           scientificResearchProgress: null,
           personalityTraits: null,
           abnormalIssues: null,
@@ -333,7 +341,8 @@ export default {
             return
           }
           this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.onCampusFlag = res.data.studentAdminStudentStatusRecord.onCampusFlag
-          this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.leavingSchoolDetails = res.data.studentAdminStudentStatusRecord.leavingSchoolDetails
+          this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.leavingSchoolReason = res.data.studentAdminStudentStatusRecord.leavingSchoolReason
+          this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.leavingSchoolDestination = res.data.studentAdminStudentStatusRecord.leavingSchoolDestination
           this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.scientificResearchProgress = res.data.studentAdminStudentStatusRecord.scientificResearchProgress
           this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.personalityTraits = res.data.studentAdminStudentStatusRecord.personalityTraits
           this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.abnormalIssues = res.data.studentAdminStudentStatusRecord.abnormalIssues
@@ -356,8 +365,11 @@ export default {
       } else if (isEmpty(this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.onCampusFlag)) {
         this.$message.error("是否在校不能为空")
         return;
-      } else if (!this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.onCampusFlag && isEmpty(this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.leavingSchoolDetails)) {
-        this.$message.error("学生若离校离校原因及去向不能为空");
+      } else if (!this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.onCampusFlag && isEmpty(this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.leavingSchoolReason)) {
+        this.$message.error("学生若离校离校原因不能为空");
+        return;
+      } else if (!this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.onCampusFlag && isEmpty(this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.leavingSchoolDestination)) {
+        this.$message.error("学生若离校离校去向不能为空");
         return;
       } else if (isEmpty(this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.scientificResearchProgress)) {
         this.$message.error("科研进展情况不能为空")
@@ -375,7 +387,8 @@ export default {
         studentId: this.studentStatusRecordDialogData.studentStatusRecordForm.student.id,
         studentAdminStudentStatusRecordDateId: this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.id,
         onCampusFlag: this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.onCampusFlag,
-        leavingSchoolDetails: this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.leavingSchoolDetails,
+        leavingSchoolReason: this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.leavingSchoolReason,
+        leavingSchoolDestination: this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.leavingSchoolDestination,
         scientificResearchProgress: this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.scientificResearchProgress,
         personalityTraits: this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.personalityTraits,
         abnormalIssues: this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.abnormalIssues,

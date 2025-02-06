@@ -85,8 +85,11 @@
                 <el-form-item class="studentStatusRecordFormItem" label="是否在校">
                   {{ item.onCampusFlag ? '是' : '否' }}
                 </el-form-item>
-                <el-form-item class="studentStatusRecordFormItem" label="离校原因及去向" v-if="!item.onCampusFlag">
-                  {{ item.leavingSchoolDetails }}
+                <el-form-item class="studentStatusRecordFormItem" label="离校原因" v-if="!item.onCampusFlag">
+                  {{ item.leavingSchoolReason }}
+                </el-form-item>
+                <el-form-item class="studentStatusRecordFormItem" label="离校去向" v-if="!item.onCampusFlag">
+                  {{ item.leavingSchoolDestination }}
                 </el-form-item>
                 <el-form-item class="studentStatusRecordFormItem" label="科研进展情况">
                   {{ item.scientificResearchProgress }}
