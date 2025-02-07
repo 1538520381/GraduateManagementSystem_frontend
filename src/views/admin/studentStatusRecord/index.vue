@@ -71,11 +71,11 @@
         </el-form>
         <el-tabs class="studentStatusRecordTabs" v-model="tabsActive" type="card">
           <el-tab-pane class="studentStatusRecordTab" v-for="(item,index) in studentStatusRecord.studentStatusRecords"
-                       :label="item.studentAdminStudentStatusRecordDate.name">
+                       :label="item.studentAdminStudentStatusRecordDate.week">
             <el-form class="studentStatusRecordForm">
               <el-form-item class="studentStatusRecordFormItem" label="时间">
                 {{
-                  formatTimestamp(item.studentAdminStudentStatusRecordDate.startTime) + ' —— ' + formatTimestamp(item.studentAdminStudentStatusRecordDate.endTime)
+                  item.studentAdminStudentStatusRecordDate.semester + " " + item.studentAdminStudentStatusRecordDate.week + "(" + formatTimestamp(item.studentAdminStudentStatusRecordDate.startTime) + ' — ' + formatTimestamp(item.studentAdminStudentStatusRecordDate.endTime) + ')'
                 }}
               </el-form-item>
               <div v-if="isEmpty(item.id)">

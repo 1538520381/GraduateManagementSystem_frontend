@@ -80,7 +80,7 @@
                v-if="!isEmpty(studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate)">
         <el-form-item class="studentStatusRecordFormItem" label="日期" label-width="150px">
           <div>{{
-              formatTimestamp(studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.startTime) + ' —— ' + formatTimestamp(studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.endTime)
+              studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.semester + " " + studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.week + '(' + formatTimestamp(studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.startTime) + ' — ' + formatTimestamp(studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.endTime) + ')'
             }}
           </div>
         </el-form-item>
@@ -194,15 +194,17 @@ export default {
           studentAdminStudentStatusRecordDate: {
             id: null,
             startTime: null,
-            endTime: null
+            endTime: null,
+            week: null,
+            semester: null
           },
           studentAdminStudentStatusRecord: {
             onCampusFlag: null,
-            leavingSchoolReason: '',
-            leavingSchoolDestination: '',
-            scientificResearchProgress: '',
-            personalityTraits: '',
-            abnormalIssues: '',
+            leavingSchoolReason: null,
+            leavingSchoolDestination: null,
+            scientificResearchProgress: null,
+            personalityTraits: null,
+            abnormalIssues: null,
           }
         },
       }
@@ -241,15 +243,17 @@ export default {
         studentAdminStudentStatusRecordDate: {
           id: null,
           startTime: null,
-          endTime: null
+          endTime: null,
+          week: null,
+          semester: null
         },
         studentAdminStudentStatusRecord: {
           onCampusFlag: null,
-          leavingSchoolReason: '',
-          leavingSchoolDestination: '',
-          scientificResearchProgress: '',
-          personalityTraits: '',
-          abnormalIssues: '',
+          leavingSchoolReason: null,
+          leavingSchoolDestination: null,
+          scientificResearchProgress: null,
+          personalityTraits: null,
+          abnormalIssues: null,
         }
       }
     },
@@ -354,6 +358,8 @@ export default {
           this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.id = res.data.studentAdminStudentStatusRecordDate.id
           this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.startTime = res.data.studentAdminStudentStatusRecordDate.startTime
           this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.endTime = res.data.studentAdminStudentStatusRecordDate.endTime
+          this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.week = res.data.studentAdminStudentStatusRecordDate.week
+          this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.semester = res.data.studentAdminStudentStatusRecordDate.semester
 
           if (isEmpty(res.data.studentAdminStudentStatusRecord)) {
             return
