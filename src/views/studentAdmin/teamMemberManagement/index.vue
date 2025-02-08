@@ -3,36 +3,92 @@
     <Header></Header>
     <div class="middle">
       <SidebarMenu userType="studentAdmin" active="0"></SidebarMenu>
-      <div class="main">
-        <div class="searchContainer">
-          <el-input class="searchInput" v-model="queryPageForm.studentNumber" prefix-icon="el-icon-search"
-                    placeholder="学号"></el-input>
-          <el-input class="searchInput" v-model="queryPageForm.name" prefix-icon="el-icon-search"
-                    placeholder="姓名"></el-input>
-        </div>
-        <div class="controlContainer">
-          <el-button class="controlButton" type="primary" @click="queryStudentListByStudentAdminId">搜索</el-button>
-          <el-button class="controlButton" type="primary" @click="openTeamMemberSelectionDialog">选择组员</el-button>
-        </div>
-        <el-scrollbar class="tableContainer">
-          <el-table class="table" :data="studentList" empty-text="暂无学生">
-            <el-table-column class="tableColumn" prop="classNumber" label="班级号"></el-table-column>
-            <el-table-column class="tableColumn" prop="studentNumber" label="学号"></el-table-column>
-            <el-table-column class="tableColumn" prop="name" label="姓名"></el-table-column>
-            <el-table-column class="tableColumn" fixed="right" label="操作">
-              <template slot-scope="scope">
-                <el-button type="text" size="small" @click="openStudentStatusRecordDialog(scope.row)">学生状态记录
-                </el-button>
+      <div class="studentTable" v-if="studentTableFlag">
+        <div class="main">
+          <div class="searchContainer">
+            <el-input class="searchInput" v-model="queryPageForm.studentNumber" prefix-icon="el-icon-search"
+                      placeholder="学号"></el-input>
+            <el-input class="searchInput" v-model="queryPageForm.name" prefix-icon="el-icon-search"
+                      placeholder="姓名"></el-input>
+          </div>
+          <div class="controlContainer">
+            <el-button class="controlButton" type="primary" @click="queryStudentListByStudentAdminId">搜索</el-button>
+            <el-button class="controlButton" type="primary" @click="openTeamMemberSelectionDialog">选择组员</el-button>
+          </div>
+          <el-scrollbar class="tableContainer">
+            <el-table class="table" :data="studentList" empty-text="暂无学生">
+              <el-table-column class="tableColumn" prop="classNumber" label="班级号"></el-table-column>
+              <el-table-column class="tableColumn" prop="studentNumber" label="学号"></el-table-column>
+              <el-table-column class="tableColumn" prop="name" label="姓名"></el-table-column>
+              <el-table-column class="tableColumn" fixed="right" label="操作">
+                <template slot-scope="scope">
+                  <el-button type="text" size="small" @click="openStudentStatusRecordDialog(scope.row)">学生状态记录
+                  </el-button>
 
-                <el-divider direction="vertical" v-if="scope.row.id !== student.id"></el-divider>
-                <el-popconfirm title="确定删除组员吗?" @confirm="deleteTeamMember(scope.row.id)"
-                               v-if="scope.row.id !== student.id">
-                  <el-button style="color: #ff0000" type="text" size="small" slot="reference">删除</el-button>
-                </el-popconfirm>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-scrollbar>
+                  <el-divider direction="vertical" v-if="scope.row.id !== student.id"></el-divider>
+                  <el-popconfirm title="确定删除组员吗?" @confirm="deleteTeamMember(scope.row.id)"
+                                 v-if="scope.row.id !== student.id">
+                    <el-button style="color: #ff0000" type="text" size="small" slot="reference">删除</el-button>
+                  </el-popconfirm>
+                  <el-divider direction="vertical"></el-divider>
+                  <el-button type="text" size="small" @click="selectStudentStatusRecord(scope.row)">
+                    学生状态记录详情
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-scrollbar>
+        </div>
+      </div>
+      <div class="studentStatusRecord" v-else>
+        <el-page-header class="pageHeader" @back="selectStudentTable"
+                        content="学生状态记录详情"></el-page-header>
+        <el-form class="studentInformationForm">
+          <el-form-item class="studentInformationFormItem" label="班级号">
+            {{ studentStatusRecord.student.classNumber }}
+          </el-form-item>
+          <el-form-item class="studentInformationFormItem" label="学号">
+            {{ studentStatusRecord.student.studentNumber }}
+          </el-form-item>
+          <el-form-item class="studentInformationFormItem" label="姓名">
+            {{ studentStatusRecord.student.name }}
+          </el-form-item>
+        </el-form>
+        <el-tabs class="studentStatusRecordTabs" v-model="tabsActive" type="card">
+          <el-tab-pane class="studentStatusRecordTab" v-for="(item,index) in studentStatusRecord.studentStatusRecords"
+                       :label="item.studentAdminStudentStatusRecordDate.week">
+            <el-form class="studentStatusRecordForm">
+              <el-form-item class="studentStatusRecordFormItem" label="时间">
+                {{
+                  item.studentAdminStudentStatusRecordDate.semester + " " + item.studentAdminStudentStatusRecordDate.week + "(" + formatTimestamp(item.studentAdminStudentStatusRecordDate.startTime) + ' — ' + formatTimestamp(item.studentAdminStudentStatusRecordDate.endTime) + ')'
+                }}
+              </el-form-item>
+              <div v-if="isEmpty(item.id)">
+                该生该时间段暂未登记状态记录
+              </div>
+              <div v-else>
+                <el-form-item class="studentStatusRecordFormItem" label="是否在校">
+                  {{ item.onCampusFlag ? '是' : '否' }}
+                </el-form-item>
+                <el-form-item class="studentStatusRecordFormItem" label="离校原因" v-if="!item.onCampusFlag">
+                  {{ item.leavingSchoolReason }}
+                </el-form-item>
+                <el-form-item class="studentStatusRecordFormItem" label="离校去向" v-if="!item.onCampusFlag">
+                  {{ item.leavingSchoolDestination }}
+                </el-form-item>
+                <el-form-item class="studentStatusRecordFormItem" label="科研进展情况">
+                  {{ item.scientificResearchProgress }}
+                </el-form-item>
+                <el-form-item class="studentStatusRecordFormItem" label="性格、优缺点">
+                  {{ item.personalityTraits }}
+                </el-form-item>
+                <el-form-item class="studentStatusRecordFormItem" label="异常问题">
+                  {{ item.abnormalIssues }}
+                </el-form-item>
+              </div>
+            </el-form>
+          </el-tab-pane>
+        </el-tabs>
       </div>
     </div>
 
@@ -164,6 +220,7 @@ import {
 } from "@/apis/studentAdminStudentStatusRecordDate";
 import {
   studentAdminStudentStatusRecordGetLastUpdateTimeByStudentId,
+  studentAdminStudentStatusRecordGetStudentAdminStudentStatusRecordByStudentIdToNowWithStudentAdminStudentStatusRecordDate,
   studentAdminStudentStatusRecordUpdate
 } from "@/apis/studentAdminStudentStatusRecord";
 
@@ -207,7 +264,13 @@ export default {
             abnormalIssues: null,
           }
         },
-      }
+      },
+
+      studentTableFlag: true,
+      studentStatusRecord: {
+        student: null,
+        studentStatusRecords: []
+      },
     }
   },
   async created() {
@@ -429,6 +492,19 @@ export default {
         this.$message.error("服务器异常，请联系管理员")
       })
     },
+    getStudentAdminStudentStatusRecordByStudentIdAndNowWithStudentAdminStudentStatusRecordDate(studentId) {
+      studentAdminStudentStatusRecordGetStudentAdminStudentStatusRecordByStudentIdToNowWithStudentAdminStudentStatusRecordDate({studentId: studentId}).then((res) => {
+        if (res.data.code === 200) {
+          this.studentStatusRecord.studentStatusRecords = res.data.withStudentAdminStudentStatusRecordDateVOList
+        } else {
+          console.log(res)
+          this.$message.error(res.data.msg)
+        }
+      }).catch((err) => {
+        console.log(err)
+        this.$message.error("服务器异常，请联系管理员")
+      })
+    },
 
     openTeamMemberSelectionDialog() {
       this.initTeamMemberSelectionDialogDataQueryPageForm()
@@ -472,6 +548,15 @@ export default {
       this.studentStatusRecordDialogVis = false
     },
 
+    selectStudentTable() {
+      this.studentTableFlag = true
+    },
+    selectStudentStatusRecord(student) {
+      this.studentTableFlag = false
+      this.studentStatusRecord.student = student
+      this.getStudentAdminStudentStatusRecordByStudentIdAndNowWithStudentAdminStudentStatusRecordDate(student.id)
+    },
+
     toLogin() {
       this.$router.push("/login")
     },
@@ -502,46 +587,80 @@ export default {
   height: 0;
 }
 
-#teamMemberManagement .middle .main {
-  display: flex;
-
-  flex-flow: column;
-
+#teamMemberManagement .middle .studentTable {
   flex: 1;
 
   width: 0;
   height: 100%;
 }
 
-#teamMemberManagement .middle .main .searchContainer {
+#teamMemberManagement .middle .studentTable .main {
+  display: flex;
+
+  flex-flow: column;
+
+  flex: 1;
+
+  width: 100%;
+  height: 100%;
+}
+
+#teamMemberManagement .middle .studentTable .main .searchContainer {
   width: 100%;
 }
 
-#teamMemberManagement .middle .main .searchContainer .searchInput {
+#teamMemberManagement .middle .studentTable .main .searchContainer .searchInput {
   margin: 20px 0 0 20px;
 
   width: 200px;
 }
 
-#teamMemberManagement .middle .main .controlContainer .controlButton {
+#teamMemberManagement .middle .studentTable .main .controlContainer .controlButton {
   margin: 10px 0 0 20px;
 }
 
-#teamMemberManagement .middle .main .tableContainer {
+#teamMemberManagement .middle .studentTable .main .tableContainer {
   flex: 1;
 
   width: 100%;
   height: 0;
 }
 
-#teamMemberManagement .middle .main .tableContainer /deep/ .el-scrollbar__wrap {
+#teamMemberManagement .middle .studentTable .main .tableContainer /deep/ .el-scrollbar__wrap {
   overflow-x: hidden;
 }
 
-#teamMemberManagement .middle .main .tableContainer .table {
+#teamMemberManagement .middle .studentTable .main .tableContainer .table {
   margin: 0 auto 0 auto;
 
   width: 90%;
+}
+
+#teamMemberManagement .middle .studentStatusRecord {
+  flex: 1;
+
+  width: 0;
+  height: 100%;
+}
+
+#teamMemberManagement .middle .studentStatusRecord .pageHeader {
+  margin: 20px 20px 0 20px;
+}
+
+#teamMemberManagement .middle .studentStatusRecord .studentInformationForm {
+  margin: 10px 0 0 20px;
+}
+
+#teamMemberManagement .middle .studentStatusRecord .studentInformationForm .studentInformationFormItem {
+  margin: 0 0 0 0;
+}
+
+#teamMemberManagement .middle .studentStatusRecord .studentStatusRecordTabs .studentStatusRecordTab .studentStatusRecordForm {
+  margin: 0 0 0 20px;
+}
+
+#teamMemberManagement .middle .studentStatusRecord .studentStatusRecordTabs .studentStatusRecordTab .studentStatusRecordForm .studentStatusRecordFormItem {
+  margin: 0 0 0 0;
 }
 
 #teamMemberManagement .teamMemberSelectionDialog /deep/ .el-dialog__body {
