@@ -1,24 +1,17 @@
 <template>
-  <div id="login">
-    <el-image class="background" :src="assets.background"></el-image>
-
-    <el-tabs class="loginContainer" v-model="tabsActive" type="border-card">
-      <el-tab-pane v-if="tabFlag === 0" label="学生管理员登录">
+  <div id="studentLogin">
+    <div class="loginContainer">
+      <div v-if="tabFlag === 0">
+        <div class="title">登录</div>
         <el-input class="input" v-model="loginForm.account" placeholder="请输入学号"
                   prefix-icon="el-icon-user"></el-input>
         <el-input class="input" v-model="loginForm.password" placeholder="请输入密码（初始密码为身份证后6位）"
                   prefix-icon="el-icon-lock" show-password></el-input>
         <el-button class="textButton" type="text" @click="forgetPasswordTab">忘记密码</el-button>
-        <el-button class="formButton" @click="studentAdminLogin">登录</el-button>
-      </el-tab-pane>
-      <el-tab-pane v-if="tabFlag === 0" label="超级管理员登录">
-        <el-input class="input" v-model="loginForm.account" placeholder="请输入账号"
-                  prefix-icon="el-icon-user"></el-input>
-        <el-input class="input" v-model="loginForm.password" placeholder="请输入密码"
-                  prefix-icon="el-icon-lock" show-password></el-input>
-        <el-button class="formButton" @click="adminLogin">登录</el-button>
-      </el-tab-pane>
-      <el-tab-pane v-if="tabFlag === 1" label="忘记密码">
+        <el-button class="formButton" @click="studentLogin">登录</el-button>
+      </div>
+      <div v-if="tabFlag === 1">
+        <div class="title">忘记密码</div>
         <el-input class="input" v-model="forgetPasswordForm.studentNumber" placeholder="请输入学号"
                   prefix-icon="el-icon-user"></el-input>
         <el-input class="input" v-model="forgetPasswordForm.idNumber" placeholder="请输入身份证号后六位"
@@ -27,43 +20,35 @@
                   prefix-icon="el-icon-lock" show-password></el-input>
         <el-input class="input" v-model="forgetPasswordForm.passwordAgain" placeholder="请再次输入新密码"
                   prefix-icon="el-icon-lock" show-password></el-input>
-        <el-button class="textButton" type="text" @click="studentAdminLoginTab">返回</el-button>
+        <el-button class="textButton" type="text" @click="loginTab">返回</el-button>
         <el-button class="formButton" @click="forgetPassword">确定</el-button>
-      </el-tab-pane>
-      <el-tab-pane v-if="tabFlag === 2" label="首次登录修改密码">
+      </div>
+      <div v-if="tabFlag === 2">
+        <div class="title">首次登录修改密码</div>
         <el-input class="input" v-model="updatePasswordForm.password" placeholder="请输入密码"
                   prefix-icon="el-icon-user" show-password></el-input>
         <el-input class="input" v-model="updatePasswordForm.passwordAgain" placeholder="请再次输入密码"
                   prefix-icon="el-icon-lock" show-password></el-input>
         <el-button class="formButton" @click="updatePassword">确定</el-button>
-      </el-tab-pane>
-    </el-tabs>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import background from '@/assets/pictures/background.jpg'
-
-import {adminLogin, adminUpdatePassword} from "@/apis/admin";
-
 import {isEmpty} from "@/utils/common";
+import {studentForgetPassword, studentLogin, studentUpdatePassword} from "@/apis/student";
 import {isPassword} from "@/utils/validate";
-import {studentAdminLogin, studentForgetPassword, studentUpdatePassword} from "@/apis/student";
 
 export default {
-  name: 'Login',
+  name: "StudentLogin",
   data() {
     return {
-      assets: {
-        background: background
-      },
-
       loginForm: {},
       forgetPasswordForm: {},
       updatePasswordForm: {},
 
-      tabsActive: '0',
-      tabFlag: 0,
+      tabFlag: 0
     }
   },
   created() {
@@ -93,7 +78,7 @@ export default {
       }
     },
 
-    adminLogin() {
+    studentLogin() {
       if (isEmpty(this.loginForm.account) || isEmpty(this.loginForm.account.trim())) {
         this.$message.error("账号不能为空")
         return
@@ -102,48 +87,16 @@ export default {
         return
       }
 
-      adminLogin({
-        account: this.loginForm.account.trim(),
-        password: this.loginForm.password.trim(),
-      }).then((res) => {
-        if (res.data.code === 200) {
-          localStorage.setItem('token', res.data.token)
-          localStorage.setItem('userType', 'admin')
-          if (res.data.hasNotLoginFlag) {
-            this.updatePasswordTab()
-          } else {
-            this.toStudentManagement()
-          }
-          this.$message.success("登录成功")
-        } else {
-          console.log(res)
-          this.$message.error(res.data.msg)
-        }
-      }).catch((err) => {
-        console.log(err)
-        this.$message.error("服务器异常，请联系管理员")
-      })
-    },
-    studentAdminLogin() {
-      if (isEmpty(this.loginForm.account) || isEmpty(this.loginForm.account.trim())) {
-        this.$message.error("账号不能为空")
-        return
-      } else if (isEmpty(this.loginForm.password) || isEmpty(this.loginForm.password.trim())) {
-        this.$message.error("密码不能为空")
-        return
-      }
-
-      studentAdminLogin({
+      studentLogin({
         studentNumber: this.loginForm.account.trim(),
         password: this.loginForm.password.trim(),
       }).then((res) => {
         if (res.data.code === 200) {
           localStorage.setItem('token', res.data.token)
-          localStorage.setItem('userType', 'studentAdmin')
           if (res.data.hasNotLoginFlag) {
             this.updatePasswordTab()
           } else {
-            this.toTeamMemberManagement()
+            this.toStudentHome()
           }
           this.$message.success("登录成功")
         } else {
@@ -182,7 +135,7 @@ export default {
         password: this.forgetPasswordForm.password.trim(),
       }).then((res) => {
         if (res.data.code === 200) {
-          this.studentAdminLoginTab()
+          this.loginTab()
           this.$message.success("修改成功");
         } else {
           console.log(res)
@@ -213,101 +166,86 @@ export default {
         return
       }
 
-      if (userType === 'studentAdmin') {
-        studentUpdatePassword({
-          password: this.updatePasswordForm.password.trim()
-        }).then((res) => {
-          if (res.data.code === 200) {
-            this.toTeamMemberManagement()
-            this.$message.success("修改成功")
-          } else {
-            console.log(res)
-            this.$message.error(res.data.msg)
-          }
-        }).catch((err) => {
-          console.log(err)
-          this.$message.error("服务器异常，请联系管理员")
-        })
-      } else if (userType === 'admin') {
-        adminUpdatePassword({
-          password: this.updatePasswordForm.password.trim()
-        }).then((res) => {
-          if (res.data.code === 200) {
-            this.toStudentManagement()
-            this.$message.success("修改成功")
-          } else {
-            console.log(res)
-            this.$message.error(res.data.msg)
-          }
-        }).catch((err) => {
-          console.log(err)
-          this.$message.error("服务器异常，请联系管理员")
-        })
-      } else {
+      studentUpdatePassword({
+        password: this.updatePasswordForm.password.trim()
+      }).then((res) => {
+        if (res.data.code === 200) {
+          this.toStudentHome()
+          this.$message.success("修改成功")
+        } else {
+          console.log(res)
+          this.$message.error(res.data.msg)
+        }
+      }).catch((err) => {
+        console.log(err)
         this.$message.error("服务器异常，请联系管理员")
-      }
+      })
     },
 
-    studentAdminLoginTab() {
+    loginTab() {
       this.initLoginForm()
-      this.tabsActive = '0'
       this.tabFlag = 0
     },
     forgetPasswordTab() {
       this.initForgetPasswordForm()
-      this.tabsActive = '0'
       this.tabFlag = 1
     },
     updatePasswordTab() {
       this.initUpdatePasswordForm()
-      this.tabsActive = '0'
       this.tabFlag = 2
     },
 
-    toStudentManagement() {
-      this.$router.push("/studentManagement")
-    },
-    toTeamMemberManagement() {
-      this.$router.push("/teamMemberManagement")
+    toStudentHome() {
+      this.$router.push("/student/home")
     }
   }
 }
 </script>
 
 <style scoped>
-#login {
+#studentLogin {
   display: flex;
-
-  align-items: center;
 
   width: 100%;
   height: 100%;
+
+  justify-content: center;
+  align-items: center;
+
+  background-color: #1D59AE;
 }
 
-#login .background {
-  position: absolute;
+#studentLogin .loginContainer {
+  display: inline-block;
 
-  top: 0;
-  bottom: 0;
+  padding: 15px 10px 15px 10px;
+
+  width: 80%;
+
+  border: 1px solid #1D59AE;
+  border-radius: 20px;
+
+  background-color: #ffffff;
+
+  box-shadow: rgba(195, 200, 219, 0.7) 0 0 30px;
 }
 
-#login .loginContainer {
-  position: absolute;
+#studentLogin .loginContainer .title {
+  text-align: center;
 
-  right: 100px;
-
-  background: white;
+  font-weight: bold;
+  font-size: 20px;
 }
 
-#login .loginContainer .input {
+#studentLogin .loginContainer .input {
   display: block;
 
   margin: 10px 0 0 0;
 
-  width: 300px;
+  width: 100%;
 }
 
-#login .loginContainer .textButton {
+#studentLogin .loginContainer .textButton {
   display: block;
 
   margin: 5px 0 0 0;
@@ -316,7 +254,7 @@ export default {
   color: #888888;
 }
 
-#login .loginContainer .formButton {
+#studentLogin .loginContainer .formButton {
   margin: 5px 0 0 0;
 
   width: 300px;

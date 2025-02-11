@@ -98,3 +98,11 @@ export function studentGetClassNumberListOfStudentAdmin() {
         url: '/student/getClassNumberListOfStudentAdmin', method: 'GET'
     })
 }
+
+export function studentLogin(loginForm) {
+    return request({
+        url: '/student/login', method: 'POST', data: {
+            studentNumber: loginForm.studentNumber, password: loginForm.password
+        }
+    })
+}
