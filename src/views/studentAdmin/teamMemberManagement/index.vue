@@ -105,7 +105,7 @@
         </el-button>
       </div>
       <div class="tableContainer">
-        <el-table class="table" :data="teamMemberSelectionDialogData.studentList" empty-text="暂无组员">
+        <el-table class="table" :data="teamMemberSelectionDialogData.studentList" empty-text="暂无学生">
           <el-table-column class="tableColumn" prop="studentNumber" label="学号"></el-table-column>
           <el-table-column class="tableColumn" prop="name" label="姓名"></el-table-column>
           <el-table-column class="tableColumn" prop="classNumber" label="班级号"></el-table-column>

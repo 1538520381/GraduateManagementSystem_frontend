@@ -34,6 +34,8 @@
                 <el-popconfirm title="确定取消管理员吗?" @confirm="setType(scope.row.id,0)">
                   <el-button type="text" size="small" slot="reference">取消管理员</el-button>
                 </el-popconfirm>
+                <el-divider direction="vertical"></el-divider>
+                <el-button type="text" size="small" slot="reference" @click="openTeamMemberDialog(scope.row.id)">查看组员</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -46,6 +48,14 @@
         </div>
       </div>
     </div>
+
+    <el-dialog class="teamMemberDialog" title="组员列表" :visible.sync="teamMemberDialogVis">
+      <el-table class="table" :data="teamMemberDialogData.studentList" empty-text="暂无学生">
+        <el-table-column class="tableColumn" prop="classNumber" label="班级号"></el-table-column>
+        <el-table-column class="tableColumn" prop="studentNumber" label="学号"></el-table-column>
+        <el-table-column class="tableColumn" prop="name" label="姓名"></el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
@@ -55,7 +65,7 @@ import Header from "@/components/header/index.vue";
 
 import {isEmpty} from "@/utils/common";
 import {
-  studentGetClassNumberListOfStudentAdmin,
+  studentGetClassNumberListOfStudentAdmin, studentQueryListByStudentAdminId,
   studentQueryPageWithStudentAdmin,
   studentSetType
 } from "@/apis/student";
@@ -79,6 +89,11 @@ export default {
       page: 0,
       pageSize: 5,
       total: 0,
+
+      teamMemberDialogVis: false,
+      teamMemberDialogData: {
+        studentList: []
+      },
 
       typeOptions: [
         {
@@ -184,6 +199,25 @@ export default {
     selectPage(page) {
       this.page = page
       this.queryPage()
+    },
+
+    openTeamMemberDialog(studentAdminId) {
+      studentQueryListByStudentAdminId({
+        studentNumber: null,
+        name: null,
+        studentAdminId: studentAdminId
+      }).then((res) => {
+        if (res.data.code === 200) {
+          this.teamMemberDialogData.studentList = res.data.studentList
+        } else {
+          console.log(res)
+          this.$message.error(res.data.msg)
+        }
+      }).catch((err) => {
+        console.log(err)
+        this.$message.error("服务器异常，请联系管理员")
+      })
+      this.teamMemberDialogVis = true
     },
 
     toLogin() {
