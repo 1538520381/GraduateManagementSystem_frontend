@@ -2,7 +2,7 @@
   <div id="studentHome">
     <StudentHeader title="首页"></StudentHeader>
     <el-scrollbar class="middle">
-      <div class="module">
+      <div class="module" @click="toStudentInternshipApplication">
         实习申请
       </div>
     </el-scrollbar>
@@ -39,6 +39,10 @@ export default {
         this.$message.error("服务器异常，请联系管理员")
       })
     },
+
+    toStudentInternshipApplication() {
+      this.$router.push("/student/internshipApplication")
+    }
   }
 }
 </script>
