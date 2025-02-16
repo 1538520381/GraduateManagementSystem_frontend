@@ -3,7 +3,7 @@ import VueRouter from "vue-router";
 
 Vue.use(VueRouter)
 
-export const constantRoutes = [{path: '/', redirect: '/student/login', hidden: true},
+export const constantRoutes = [{path: '/', redirect: '/login', hidden: true},
 
     {
         path: '/login', name: 'Login', component: () => import('@/views/login'),
@@ -21,6 +21,10 @@ export const constantRoutes = [{path: '/', redirect: '/student/login', hidden: t
         path: '/studentStatusRecord',
         name: 'StudentStatusRecord',
         component: () => import('@/views/admin/studentStatusRecord')
+    }, {
+        path: '/internshipApplicationManagement',
+        name: 'InternshipApplicationManagement',
+        component: () => import('@/views/admin/internshipApplicationManagement')
     },
 
     {
@@ -34,7 +38,9 @@ export const constantRoutes = [{path: '/', redirect: '/student/login', hidden: t
     }, {
         path: '/student/home', name: 'StudentHome', component: () => import('@/views/student/home')
     }, {
-        path: '/student/internshipApplication', name: 'StudentInternshipApplication', component: () => import('@/views/student/internshipApplication')
+        path: '/student/internshipApplication',
+        name: 'StudentInternshipApplication',
+        component: () => import('@/views/student/internshipApplication')
     }]
 
 const createRouter = () => new VueRouter({

@@ -6,12 +6,12 @@
       <div class="studentTable" v-if="studentTableFlag">
         <div class="main">
           <div class="searchContainer">
+            <el-input class="searchInput" v-model="queryPageForm.classNumber" prefix-icon="el-icon-search"
+                      placeholder="班级号"></el-input>
             <el-input class="searchInput" v-model="queryPageForm.studentNumber" prefix-icon="el-icon-search"
                       placeholder="学号"></el-input>
             <el-input class="searchInput" v-model="queryPageForm.name" prefix-icon="el-icon-search"
                       placeholder="姓名"></el-input>
-            <el-input class="searchInput" v-model="queryPageForm.classNumber" prefix-icon="el-icon-search"
-                      placeholder="班级号"></el-input>
             <el-select class="searchInput" v-model="queryPageForm.type" placeholder="请选择类型" clearable>
               <el-option v-for="item in typeOptions" :key="item.value" :label="item.label"
                          :value="item.value"></el-option>

@@ -40,6 +40,11 @@ export default {
           index: '2',
           userType: 'admin',
           url: '/studentStatusRecord'
+        }, {
+          title: '实习申请管理',
+          index: '3',
+          userType: 'admin',
+          url: '/internshipApplicationManagement'
         },
 
         {

@@ -88,28 +88,28 @@
           <div class="historyListEmpty" v-if="isEmpty(internshipApplicationList)">暂无记录</div>
           <div class="historyList" v-else>
             <el-form class="historyForm" v-for="(item,index) in internshipApplicationList">
-              <el-form-item class="historyFormItem" label="实习开始时间">
+              <el-form-item class="historyFormItem" :label-width="historyFormItemWidth" label="实习开始时间">
                 {{ formatTimestamp(item.internshipStartTime) }}
               </el-form-item>
-              <el-form-item class="historyFormItem" label="实习结束时间">
+              <el-form-item class="historyFormItem" :label-width="historyFormItemWidth" label="实习结束时间">
                 {{ formatTimestamp(item.internshipEndTime) }}
               </el-form-item>
-              <el-form-item class="historyFormItem" label="实习单位名称">
+              <el-form-item class="historyFormItem" :label-width="historyFormItemWidth" label="实习单位名称">
                 {{ item.internshipUnit }}
               </el-form-item>
-              <el-form-item class="historyFormItem" label="是否校外住宿">
+              <el-form-item class="historyFormItem" :label-width="historyFormItemWidth" label="是否校外住宿">
                 {{ item.offCampusHousingFlag ? '是' : '否' }}
               </el-form-item>
-              <el-form-item class="historyFormItem" label="实习申请单">
+              <el-form-item class="historyFormItem" :label-width="historyFormItemWidth" label="实习申请单">
                 <FileContainer :file="item.internshipApplicationFormDocument"></FileContainer>
               </el-form-item>
-              <el-form-item class="historyFormItem" label="家长知情书">
+              <el-form-item class="historyFormItem" :label-width="historyFormItemWidth" label="家长知情书">
                 <FileContainer :file="item.parentalNotificationLetterDocument"></FileContainer>
               </el-form-item>
-              <el-form-item class="historyFormItem" label="状态">
+              <el-form-item class="historyFormItem" :label-width="historyFormItemWidth" label="状态">
                 {{ internshipApplicationStatusDict[item.status] }}
               </el-form-item>
-              <el-form-item class="historyFormItem" label="备注" v-if="!isEmpty(item.remark)">
+              <el-form-item class="historyFormItem" :label-width="historyFormItemWidth" label="备注" v-if="!isEmpty(item.remark)">
                 {{ item.remark }}
               </el-form-item>
               <div class="footer" v-if="item.status === 0">
@@ -151,6 +151,7 @@ export default {
       internshipApplicationFormItemLabelWidth: '100px',
 
       internshipApplicationList: [],
+      historyFormItemWidth: '100px',
 
       tabFlag: 0,
 

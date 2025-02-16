@@ -24,7 +24,20 @@ export function internshipApplicationListByStudentId(listByStudentIdForm) {
 export function internshipApplicationUpdateById(updateByIdForm) {
     return request({
         url: '/internshipApplication/updateById', method: 'PUT', data: {
-            id: updateByIdForm.id, status: updateByIdForm.status
+            id: updateByIdForm.id, status: updateByIdForm.status, remark: updateByIdForm.remark
+        }
+    })
+}
+
+export function internshipApplicationQueryPageWithoutStatus1WithStudentAndDocument(queryPageWithoutStatus1WithStudentAndDocumentForm) {
+    return request({
+        url: '/internshipApplication/queryPageWithoutStatus1WithStudentAndDocument', method: 'GET', params: {
+            page: queryPageWithoutStatus1WithStudentAndDocumentForm.page,
+            pageSize: queryPageWithoutStatus1WithStudentAndDocumentForm.pageSize,
+            studentNumber: queryPageWithoutStatus1WithStudentAndDocumentForm.studentNumber,
+            name: queryPageWithoutStatus1WithStudentAndDocumentForm.name,
+            classNumber: queryPageWithoutStatus1WithStudentAndDocumentForm.classNumber,
+            status: queryPageWithoutStatus1WithStudentAndDocumentForm.status,
         }
     })
 }

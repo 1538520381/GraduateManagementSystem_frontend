@@ -5,14 +5,14 @@
       <SidebarMenu userType="admin" active="1"></SidebarMenu>
       <div class="main">
         <div class="searchContainer">
-          <el-input class="searchInput" v-model="queryPageForm.studentNumber" prefix-icon="el-icon-search"
-                    placeholder="学号"></el-input>
-          <el-input class="searchInput" v-model="queryPageForm.name" prefix-icon="el-icon-search"
-                    placeholder="姓名"></el-input>
           <el-select class="searchInput" v-model="queryPageForm.classNumber" placeholder="请选择班级号" clearable>
             <el-option v-for="item in studentAdminClassNumberList" :key="item" :label="item"
                        :value="item"></el-option>
           </el-select>
+          <el-input class="searchInput" v-model="queryPageForm.studentNumber" prefix-icon="el-icon-search"
+                    placeholder="学号"></el-input>
+          <el-input class="searchInput" v-model="queryPageForm.name" prefix-icon="el-icon-search"
+                    placeholder="姓名"></el-input>
         </div>
         <div class="controlContainer">
           <el-button class="controlButton" type="primary" @click="queryPage">搜索</el-button>
@@ -139,6 +139,7 @@ export default {
         this.$message.error("服务器异常，请联系管理员")
       })
     },
+
     queryPage() {
       studentQueryPageWithStudentAdmin({
         studentNumber: isEmpty(this.queryPageForm.studentNumber) ? null : this.queryPageForm.studentNumber.trim(),
