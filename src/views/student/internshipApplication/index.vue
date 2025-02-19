@@ -1,6 +1,6 @@
 <template>
   <div id="internshipApplication">
-    <StudentHeader title="实习申请"></StudentHeader>
+    <StudentHeader title="实习申请" :to-home-button-flag="true"></StudentHeader>
     <div class="middle">
       <div class="addMain" v-if="tabFlag === 0">
         <div class="history" @click="historyTab">历史申请记录
