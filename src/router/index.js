@@ -41,6 +41,10 @@ export const constantRoutes = [{path: '/', redirect: '/login', hidden: true},
         path: '/student/internshipApplication',
         name: 'StudentInternshipApplication',
         component: () => import('@/views/student/internshipApplication')
+    }, {
+        path: '/student/questionnaire',
+        name: 'StudentQuestionnaire',
+        component: () => import('@/views/student/questionnaire')
     }]
 
 const createRouter = () => new VueRouter({

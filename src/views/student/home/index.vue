@@ -2,8 +2,8 @@
   <div id="studentHome">
     <StudentHeader title="首页"></StudentHeader>
     <el-scrollbar class="middle">
-      <div class="module" @click="toStudentInternshipApplication">
-        实习申请
+      <div class="module" @click="toUrl(item.url)" v-for="(item,index) in moduleList">
+        {{ item.name }}
       </div>
     </el-scrollbar>
   </div>
@@ -18,7 +18,18 @@ export default {
   components: {StudentHeader},
   data() {
     return {
-      student: null
+      student: null,
+
+      moduleList: [
+        {
+          name: "实习申请",
+          url: '/student/internshipApplication'
+        },
+        {
+          name: "问卷",
+          url: '/student/questionnaire'
+        }
+      ]
     }
   },
   async created() {
@@ -40,8 +51,10 @@ export default {
       })
     },
 
-    toStudentInternshipApplication() {
-      this.$router.push("/student/internshipApplication")
+    toUrl(url) {
+      if (window.location.pathname !== url) {
+        this.$router.push(url)
+      }
     }
   }
 }
