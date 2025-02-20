@@ -3,7 +3,7 @@
     <Header></Header>
     <div class="middle">
       <SidebarMenu userType="admin" active="2"></SidebarMenu>
-      <div class="studentTable" v-if="studentTableFlag">
+      <div class="studentTable" v-if="studentTableTab === 0">
         <div class="main">
           <div class="searchContainer">
             <el-input class="searchInput" v-model="queryPageForm.classNumber" prefix-icon="el-icon-search"
@@ -40,7 +40,11 @@
               <el-table-column class="tableColumn" fixed="right" label="操作">
                 <template slot-scope="scope">
                   <el-button type="text" size="small" @click="selectStudentStatusRecord(scope.row)">
-                    学生状态记录详情
+                    学生状态
+                  </el-button>
+                  <el-divider direction="vertical"></el-divider>
+                  <el-button type="text" size="small" @click="selectStudentQuestionnaireAnswer(scope.row)">
+                    问卷
                   </el-button>
                 </template>
               </el-table-column>
@@ -55,7 +59,7 @@
           </div>
         </div>
       </div>
-      <div class="studentStatusRecord" v-else>
+      <div class="studentStatusRecord" v-else-if="studentTableTab === 1">
         <el-page-header class="pageHeader" @back="selectStudentTable"
                         content="学生状态记录详情"></el-page-header>
         <el-form class="studentInformationForm">
@@ -69,7 +73,7 @@
             {{ studentStatusRecord.student.name }}
           </el-form-item>
         </el-form>
-        <el-tabs class="studentStatusRecordTabs" v-model="tabsActive" type="card">
+        <el-tabs class="studentStatusRecordTabs" v-model="studentStatusRecord.tabsActive" type="card">
           <el-tab-pane class="studentStatusRecordTab" v-for="(item,index) in studentStatusRecord.studentStatusRecords"
                        :label="item.studentAdminStudentStatusRecordDate.week">
             <el-form class="studentStatusRecordForm">
@@ -105,6 +109,51 @@
           </el-tab-pane>
         </el-tabs>
       </div>
+      <div class="studentQuestionnaireAnswer" v-else-if="studentTableTab === 2">
+        <el-page-header class="pageHeader" @back="selectStudentTable"
+                        content="问卷结果详情"></el-page-header>
+        <el-form class="studentInformationForm">
+          <el-form-item class="studentInformationFormItem" label="班级号">
+            {{ studentQuestionnaireAnswer.student.classNumber }}
+          </el-form-item>
+          <el-form-item class="studentInformationFormItem" label="学号">
+            {{ studentQuestionnaireAnswer.student.studentNumber }}
+          </el-form-item>
+          <el-form-item class="studentInformationFormItem" label="姓名">
+            {{ studentQuestionnaireAnswer.student.name }}
+          </el-form-item>
+        </el-form>
+        <el-tabs class="studentQuestionnaireAnswerTabs" v-model="studentQuestionnaireAnswer.tabsActive" type="card">
+          <el-tab-pane class="studentQuestionnaireAnswerTab"
+                       v-for="(item1,index) in studentQuestionnaireAnswer.questionnaireList"
+                       :label="item1.createTime">
+            <el-scrollbar class="studentQuestionnaireAnswerScrollbar">
+              <el-form class="studentQuestionnaireAnswerForm">
+                <el-form-item class="studentQuestionnaireAnswerFormItem" label="时间">
+                  {{
+                    formatTimestamp(item1.startTime) + ' — ' + formatTimestamp(item1.endTime)
+                  }}
+                </el-form-item>
+                <el-form-item class="studentQuestionnaireAnswerFormItem"
+                              :style="{color: judgeQuestionnaireStatus(item1).color}" label="问卷状态">
+                  {{
+                    judgeQuestionnaireStatus(item1).status
+                  }}
+                </el-form-item>
+                <div v-if="isEmpty(item1.studentQuestionnaireAnswerList)">
+                  该生该问卷暂未填写
+                </div>
+                <div v-else>
+                  <div class="question" v-for="(item2,index) in item1.questionnaireQuestionList">
+                    <div class="stem">{{ (index + 1) + ". " + item2.stem }}</div>
+                    <div class="answer">{{ item2.answer }}</div>
+                  </div>
+                </div>
+              </el-form>
+            </el-scrollbar>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
     </div>
   </div>
 </template>
@@ -119,6 +168,7 @@ import {adminGetAdminByToken} from "@/apis/admin";
 import {
   studentAdminStudentStatusRecordGetStudentAdminStudentStatusRecordByStudentIdToNowWithStudentAdminStudentStatusRecordDate
 } from "@/apis/studentAdminStudentStatusRecord";
+import {questionnaireGetListWithStudentQuestionnaireAnswerByStudentId} from "@/apis/questionnaire";
 
 export default {
   name: 'StudentStatusRecord',
@@ -130,7 +180,7 @@ export default {
     return {
       admin: null,
 
-      studentTableFlag: true,
+      studentTableTab: 0,
 
       studentList: [],
 
@@ -142,10 +192,15 @@ export default {
 
       studentStatusRecord: {
         student: null,
-        studentStatusRecords: []
+        studentStatusRecords: [],
+        tabsActive: '0',
       },
 
-      tabsActive: '0',
+      studentQuestionnaireAnswer: {
+        student: null,
+        questionnaireList: [],
+        tabsActive: '0',
+      },
 
       typeOptions: [
         {
@@ -189,6 +244,7 @@ export default {
         this.$message.error("服务器异常，请联系管理员")
       })
     },
+
     queryPage() {
       studentQueryPageWithStudentAdmin({
         studentNumber: isEmpty(this.queryPageForm.studentNumber) ? null : this.queryPageForm.studentNumber.trim(),
@@ -227,18 +283,80 @@ export default {
         this.$message.error("服务器异常，请联系管理员")
       })
     },
+    getQuestionnaireListWithStudentQuestionnaireAnswerByStudentId() {
+      questionnaireGetListWithStudentQuestionnaireAnswerByStudentId({
+        studentId: this.studentQuestionnaireAnswer.student.id
+      }).then((res) => {
+        if (res.data.code === 200) {
+          this.studentQuestionnaireAnswer.questionnaireList = res.data.questionnaireList
+          this.studentQuestionnaireAnswer.questionnaireList.sort((o1, o2) => {
+            return o2.startTime - o1.startTime
+          })
+          for (let i = 0; i < this.studentQuestionnaireAnswer.questionnaireList.length; i++) {
+            this.studentQuestionnaireAnswer.studentQuestionnaireAnswers = []
+            this.studentQuestionnaireAnswer.questionnaireList[i].questionnaireQuestionList.sort((o1, o2) => {
+              return o1.questionNumber - o2.questionNumber
+            })
+            for (let j = 0; j < this.studentQuestionnaireAnswer.questionnaireList[i].questionnaireQuestionList.length; j++) {
+              for (let k = 0; k < this.studentQuestionnaireAnswer.questionnaireList[i].studentQuestionnaireAnswerList.length; k++) {
+                if (this.studentQuestionnaireAnswer.questionnaireList[i].studentQuestionnaireAnswerList[k].questionnaireQuestionId === this.studentQuestionnaireAnswer.questionnaireList[i].questionnaireQuestionList[j].id) {
+                  this.studentQuestionnaireAnswer.questionnaireList[i].questionnaireQuestionList[j].answer = this.studentQuestionnaireAnswer.questionnaireList[i].studentQuestionnaireAnswerList[k].answer
+                  break
+                }
+              }
+            }
+          }
+          console.log(this.studentQuestionnaireAnswer.questionnaireList)
+        } else {
+          console.log(res)
+          this.$message.error(res.data.msg)
+        }
+      }).catch((err) => {
+        console.log(err)
+        this.$message.error("服务器异常，请联系管理员")
+      })
+    },
 
     selectPage(page) {
       this.page = page
       this.queryPage()
     },
     selectStudentTable() {
-      this.studentTableFlag = true
+      this.studentTableTab = 0
     },
     selectStudentStatusRecord(student) {
-      this.studentTableFlag = false
+      this.studentTableTab = 1
       this.studentStatusRecord.student = student
       this.getStudentAdminStudentStatusRecordByStudentIdAndNowWithStudentAdminStudentStatusRecordDate(student.id)
+    },
+    selectStudentQuestionnaireAnswer(student) {
+      this.studentTableTab = 2
+      this.studentQuestionnaireAnswer.student = student
+      this.getQuestionnaireListWithStudentQuestionnaireAnswerByStudentId()
+    },
+
+    judgeQuestionnaireStatus(questionnaire) {
+      if (questionnaire.endTime < new Date().getTime()) {
+        return {
+          status: "已结束",
+          color: "#888888"
+        }
+      } else if (questionnaire.startTime > new Date().getTime()) {
+        return {
+          status: "未开始",
+          color: "#888888"
+        }
+      } else if (isEmpty(questionnaire.studentQuestionnaireAnswerList)) {
+        return {
+          status: "待填写",
+          color: "#0000ff"
+        }
+      } else {
+        return {
+          status: "已填写",
+          color: "#43BE86"
+        }
+      }
     },
 
     toLogin() {
@@ -333,5 +451,95 @@ export default {
 
 #studentStatusRecord .middle .studentStatusRecord .studentStatusRecordTabs .studentStatusRecordTab .studentStatusRecordForm .studentStatusRecordFormItem {
   margin: 0 0 0 0;
+}
+
+#studentStatusRecord .middle .studentQuestionnaireAnswer {
+  display: inline-flex;
+
+  flex-flow: column;
+
+  flex: 1;
+
+  width: 0;
+  height: 100%;
+}
+
+#studentStatusRecord .middle .studentQuestionnaireAnswer .pageHeader {
+  margin: 20px 20px 0 20px;
+}
+
+#studentStatusRecord .middle .studentQuestionnaireAnswer .studentInformationForm {
+  margin: 10px 0 0 20px;
+}
+
+#studentStatusRecord .middle .studentQuestionnaireAnswer .studentInformationForm .studentInformationFormItem {
+  margin: 0 0 0 0;
+}
+
+#studentStatusRecord .middle .studentQuestionnaireAnswer .studentQuestionnaireAnswerTabs {
+  display: inline-block;
+  position: relative;
+
+  flex: 1;
+
+  width: 100%;
+  height: 0;
+}
+
+#studentStatusRecord .middle .studentQuestionnaireAnswer .studentQuestionnaireAnswerTabs /deep/ .el-tabs__header {
+  display: inline-block;
+
+  margin: 0 0 0 0 !important;
+
+  width: 100%;
+  height: 40px;
+}
+
+#studentStatusRecord .middle .studentQuestionnaireAnswer .studentQuestionnaireAnswerTabs /deep/ .el-tabs__content {
+  display: inline-block;
+
+  width: 100%;
+  height: calc(100% - 50px);
+}
+
+#studentStatusRecord .middle .studentQuestionnaireAnswer .studentQuestionnaireAnswerTabs .studentQuestionnaireAnswerTab {
+  width: 100%;
+  height: 100%;
+}
+
+#studentStatusRecord .middle .studentQuestionnaireAnswer .studentQuestionnaireAnswerTabs .studentQuestionnaireAnswerTab .studentQuestionnaireAnswerScrollbar {
+  width: 100%;
+  height: 100%;
+}
+
+
+#studentStatusRecord .middle .studentQuestionnaireAnswer .studentQuestionnaireAnswerTabs .studentQuestionnaireAnswerTab .studentQuestionnaireAnswerScrollbar /deep/ .el-scrollbar__wrap {
+  overflow-x: hidden;
+}
+
+#studentStatusRecord .middle .studentQuestionnaireAnswer .studentQuestionnaireAnswerTabs .studentQuestionnaireAnswerTab .studentQuestionnaireAnswerScrollbar .studentQuestionnaireAnswerForm {
+  margin: 0 0 0 20px;
+}
+
+#studentStatusRecord .middle .studentQuestionnaireAnswer .studentQuestionnaireAnswerTabs .studentQuestionnaireAnswerTab .studentQuestionnaireAnswerScrollbar .studentQuestionnaireAnswerForm .studentQuestionnaireAnswerFormItem {
+  margin: 0 0 0 0;
+}
+
+#studentStatusRecord .middle .studentQuestionnaireAnswer .studentQuestionnaireAnswerTabs .studentQuestionnaireAnswerTab .studentQuestionnaireAnswerScrollbar .studentQuestionnaireAnswerForm .question {
+  margin: 10px auto 10px auto;
+
+  line-height: 25px;
+
+  text-align: left;
+}
+
+#studentStatusRecord .middle .studentQuestionnaireAnswer .studentQuestionnaireAnswerTabs .studentQuestionnaireAnswerTab .studentQuestionnaireAnswerScrollbar .studentQuestionnaireAnswerForm .question .stem {
+  display: block;
+
+  word-wrap: break-word
+}
+
+#studentStatusRecord .middle .studentQuestionnaireAnswer .studentQuestionnaireAnswerTabs .studentQuestionnaireAnswerTab .studentQuestionnaireAnswerScrollbar .studentQuestionnaireAnswerForm .question .answer {
+  margin: 5px 15px 0 15px;
 }
 </style>

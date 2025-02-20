@@ -96,7 +96,6 @@ export default {
         } else {
           console.log(res)
           this.$message.error(res.data.msg)
-          this.toLogin()
         }
       }).catch((err) => {
         console.log(err)
