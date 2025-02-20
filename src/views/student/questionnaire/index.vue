@@ -6,6 +6,9 @@
         <el-scrollbar class="questionnaireListScrollbar">
           <div class="questionnaire" v-for="(item,index) in questionnaireList" @click="selectQuestionnaire(item)">
             <el-form class="questionnaireForm" v-if="item.startTime <= new Date().getTime()">
+              <el-form-item class="questionnaireFormItem" label="问卷名称">
+                {{ item.name }}
+              </el-form-item>
               <el-form-item class="questionnaireFormItem" label="填写期限">
                 {{ formatTimestamp(item.startTime) + " - " + formatTimestamp(item.endTime) }}
               </el-form-item>
@@ -23,7 +26,7 @@
         <el-scrollbar class="questionList">
           <div class="question" v-for="(item,index) in questionnaireQuestionList">
             <div class="stem">{{ (index + 1) + ". " + item.stem }}</div>
-            <el-input type="textarea" v-model="item.answer" :disabled="questionnaireStatus === '已结束'"
+            <el-input type="textarea" v-model="item.answer" maxlength="500" :disabled="questionnaireStatus === '已结束'"
                       @input="forceUpdate"></el-input>
           </div>
           <div class="footer" v-if="questionnaireStatus !== '已结束'">

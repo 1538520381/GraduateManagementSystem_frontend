@@ -126,7 +126,7 @@
         <el-tabs class="studentQuestionnaireAnswerTabs" v-model="studentQuestionnaireAnswer.tabsActive" type="card">
           <el-tab-pane class="studentQuestionnaireAnswerTab"
                        v-for="(item1,index) in studentQuestionnaireAnswer.questionnaireList"
-                       :label="item1.createTime">
+                       :label="item1.name">
             <el-scrollbar class="studentQuestionnaireAnswerScrollbar">
               <el-form class="studentQuestionnaireAnswerForm">
                 <el-form-item class="studentQuestionnaireAnswerFormItem" label="时间">
