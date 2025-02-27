@@ -2,10 +2,23 @@
   <div id="studentStatusRecord">
     <Header></Header>
     <div class="middle">
-      <SidebarMenu userType="admin" active="2"></SidebarMenu>
+      <SidebarMenu userType="admin" active="3"></SidebarMenu>
       <div class="studentTable" v-if="studentTableTab === 0">
         <div class="main">
           <div class="searchContainer">
+            <el-select class="searchInput" v-model="queryPageForm.semester" placeholder="请选择学期">
+              <el-option
+                  v-for="item in (isEmpty(studentAdminStudentStatusRecordDateDict) ? [] : Object.keys(this.studentAdminStudentStatusRecordDateDict))"
+                  :key="item" :label="item"
+                  :value="item"></el-option>
+            </el-select>
+            <el-select class="searchInput" v-model="queryPageForm.week" placeholder="请选择周">
+              <el-option
+                  v-for="item in (isEmpty(studentAdminStudentStatusRecordDateDict) ? [] : studentAdminStudentStatusRecordDateDict[queryPageForm.semester])"
+                  :key="item"
+                  :label="item"
+                  :value="item"></el-option>
+            </el-select>
             <el-select class="searchInput" v-model="queryPageForm.classNumber" placeholder="请选择班级号" clearable>
               <el-option v-for="item in studentClassNumberList" :key="item" :label="item"
                          :value="item"></el-option>
@@ -14,10 +27,6 @@
                       placeholder="学号"></el-input>
             <el-input class="searchInput" v-model="queryPageForm.name" prefix-icon="el-icon-search"
                       placeholder="姓名"></el-input>
-            <el-select class="searchInput" v-model="queryPageForm.type" placeholder="请选择类型" clearable>
-              <el-option v-for="item in typeOptions" :key="item.value" :label="item.label"
-                         :value="item.value"></el-option>
-            </el-select>
           </div>
           <div class="controlContainer">
             <el-button class="controlButton" type="primary" @click="queryPage">搜索</el-button>
@@ -28,28 +37,28 @@
               <el-table-column class="tableColumn" prop="classNumber" label="班级号"></el-table-column>
               <el-table-column class="tableColumn" prop="studentNumber" label="学号"></el-table-column>
               <el-table-column class="tableColumn" prop="name" label="姓名"></el-table-column>
-              <el-table-column class="tableColumn" prop="idNumber" label="身份证号（后六位）"></el-table-column>
-              <el-table-column class-name="tableColumn" prop="type" label="类型">
-                <template slot-scope="scope">
-                  {{ scope.row.type === 0 ? '普通学生' : '学生管理员' }}
-                </template>
-              </el-table-column>
               <el-table-column class="tableColumn" label="所属管理员">
                 <template slot-scope="scope">
                   {{ isEmpty(scope.row.studentAdmin) ? '暂无分组' : scope.row.studentAdmin.name }}
                 </template>
               </el-table-column>
-              <el-table-column class="tableColumn" fixed="right" label="操作">
+              <el-table-column class="tableColumn" label="是否在校">
                 <template slot-scope="scope">
-                  <el-button type="text" size="small" @click="selectStudentStatusRecord(scope.row)">
-                    学生状态
-                  </el-button>
-                  <el-divider direction="vertical"></el-divider>
-                  <el-button type="text" size="small" @click="selectStudentQuestionnaireAnswer(scope.row)">
-                    问卷
-                  </el-button>
+                  {{
+                    isEmpty(scope.row.studentAdminStudentStatusRecord) ? null : (scope.row.studentAdminStudentStatusRecord.onCampusFlag ? '是' : '否')
+                  }}
                 </template>
               </el-table-column>
+              <el-table-column class="tableColumn" prop="studentAdminStudentStatusRecord.leavingSchoolReason"
+                               label="离校原因"></el-table-column>
+              <el-table-column class="tableColumn" prop="studentAdminStudentStatusRecord.leavingSchoolDestination"
+                               label="离校去向"></el-table-column>
+              <el-table-column class="tableColumn" prop="studentAdminStudentStatusRecord.scientificResearchProgress"
+                               label="科研进展情况"></el-table-column>
+              <el-table-column class="tableColumn" prop="studentAdminStudentStatusRecord.personalityTraits"
+                               label="性格、优缺点"></el-table-column>
+              <el-table-column class="tableColumn" prop="studentAdminStudentStatusRecord.abnormalIssues"
+                               label="需要特别关注的问题"></el-table-column>
             </el-table>
             <el-pagination
                 :current-page="page"
@@ -168,12 +177,17 @@ import SidebarMenu from "@/components/sidebarMenu/index.vue";
 import Header from "@/components/header/index.vue";
 
 import {formatTimestamp, isEmpty} from "@/utils/common";
-import {studentGetClassNumberList, studentQueryPageWithStudentAdmin} from "@/apis/student";
+import {
+  studentGetClassNumberList,
+  studentQueryPageWithStudentAdmin,
+  studentQueryPageWithStudentAdminStudentStatusRecord
+} from "@/apis/student";
 import {adminGetAdminByToken} from "@/apis/admin";
 import {
   studentAdminStudentStatusRecordGetStudentAdminStudentStatusRecordByStudentIdToNowWithStudentAdminStudentStatusRecordDate
 } from "@/apis/studentAdminStudentStatusRecord";
 import {questionnaireGetListWithStudentQuestionnaireAnswerByStudentId} from "@/apis/questionnaire";
+import {studentAdminStudentStatusRecordDateGetList} from "@/apis/studentAdminStudentStatusRecordDate";
 
 export default {
   name: 'StudentStatusRecord',
@@ -185,6 +199,8 @@ export default {
     return {
       admin: null,
 
+      studentAdminStudentStatusRecordDateDict: {},
+
       studentTableTab: 0,
 
       studentList: [],
@@ -193,7 +209,7 @@ export default {
       queryPageForm: {},
 
       page: 0,
-      pageSize: 10,
+      pageSize: 5,
       total: 0,
 
       studentStatusRecord: {
@@ -223,6 +239,8 @@ export default {
   async created() {
     await this.getAdminByToken()
 
+    await this.getStudentAdminStudentStatusRecordDateList()
+
     this.initQueryPageForm()
     this.queryPage()
     this.getClassNumberList()
@@ -230,6 +248,8 @@ export default {
   methods: {
     initQueryPageForm() {
       this.queryPageForm = {
+        semester: isEmpty(this.studentAdminStudentStatusRecordDateDict) ? null : Object.keys(this.studentAdminStudentStatusRecordDateDict)[0],
+        week: isEmpty(this.studentAdminStudentStatusRecordDateDict) ? null : (isEmpty(this.studentAdminStudentStatusRecordDateDict[Object.keys(this.studentAdminStudentStatusRecordDateDict)[0]]) ? null : this.studentAdminStudentStatusRecordDateDict[Object.keys(this.studentAdminStudentStatusRecordDateDict)[0]][0]),
         studentNumber: null,
         name: null,
         classNumber: null,
@@ -252,12 +272,36 @@ export default {
       })
     },
 
+    getStudentAdminStudentStatusRecordDateList() {
+      return studentAdminStudentStatusRecordDateGetList().then((res) => {
+        this.studentAdminStudentStatusRecordDateDict = {}
+        if (res.data.code === 200) {
+          for (let i = 0; i < res.data.studentAdminStudentStatusRecordDateList.length; i++) {
+            if (isEmpty(this.studentAdminStudentStatusRecordDateDict[res.data.studentAdminStudentStatusRecordDateList[i].semester])) {
+              this.studentAdminStudentStatusRecordDateDict[res.data.studentAdminStudentStatusRecordDateList[i].semester] = []
+            }
+            this.studentAdminStudentStatusRecordDateDict[res.data.studentAdminStudentStatusRecordDateList[i].semester].push(res.data.studentAdminStudentStatusRecordDateList[i].week)
+          }
+        } else {
+          console.log(res)
+          this.$message.error(res.data.msg)
+        }
+      }).catch((err) => {
+        console.log(err)
+        this.$message.error("服务器异常，请联系管理员")
+      })
+    },
     queryPage() {
-      studentQueryPageWithStudentAdmin({
+      if (isEmpty(this.queryPageForm.semester) || isEmpty(this.queryPageForm.week)) {
+        this.$message.error("系统异常")
+        return
+      }
+      studentQueryPageWithStudentAdminStudentStatusRecord({
+        semester: this.queryPageForm.semester,
+        week: this.queryPageForm.week,
         studentNumber: isEmpty(this.queryPageForm.studentNumber) ? null : this.queryPageForm.studentNumber.trim(),
         name: isEmpty(this.queryPageForm.name) ? null : this.queryPageForm.name.trim(),
         classNumber: isEmpty(this.queryPageForm.classNumber) ? null : this.queryPageForm.classNumber.trim(),
-        type: isEmpty(this.queryPageForm.type) ? null : this.queryPageForm.type,
         page: this.page,
         pageSize: this.pageSize
       }).then((res) => {

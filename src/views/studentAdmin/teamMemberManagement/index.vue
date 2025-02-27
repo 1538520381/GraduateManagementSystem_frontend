@@ -90,7 +90,7 @@
                 <el-form-item class="studentStatusRecordFormItem" label="性格、优缺点">
                   {{ item.personalityTraits }}
                 </el-form-item>
-                <el-form-item class="studentStatusRecordFormItem" label="异常问题">
+                <el-form-item class="studentStatusRecordFormItem" label="需要特别关注的问题">
                   {{ item.abnormalIssues }}
                 </el-form-item>
               </div>
@@ -199,7 +199,7 @@
                     type="textarea" maxlength="500"
                     placeholder="据你接触该生是个什么性格的人，有什么优缺点（上限500字）"></el-input>
         </el-form-item>
-        <el-form-item class="studentStatusRecordFormItem" label="异常问题" label-width="150px">
+        <el-form-item class="studentStatusRecordFormItem" label="需要特别关注的问题" label-width="150px">
           <el-input class="studentStatusRecordFormInput"
                     v-model="studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.abnormalIssues"
                     type="textarea" maxlength="500"
@@ -479,7 +479,7 @@ export default {
         this.$message.error("性格、优缺点不能为空")
         return;
       } else if (isEmpty(this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.abnormalIssues)) {
-        this.$message.error("异常问题不能为空")
+        this.$message.error("需要特别关注的问题不能为空")
         return;
       }
 

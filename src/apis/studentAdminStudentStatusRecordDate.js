@@ -6,3 +6,9 @@ export function studentAdminStudentStatusRecordDateGetByNowTimeWithStudentAdminS
         method: 'GET'
     })
 }
+
+export function studentAdminStudentStatusRecordDateGetList() {
+    return request({
+        url: "/studentAdminStudentStatusRecordDate/getList", method: "GET"
+    })
+}

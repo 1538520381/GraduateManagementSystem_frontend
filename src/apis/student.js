@@ -112,3 +112,17 @@ export function studentGetClassNumberList() {
         url: '/student/getClassNumberList', method: 'GET'
     })
 }
+
+export function studentQueryPageWithStudentAdminStudentStatusRecord(queryPageWithStudentAdminStudentStatusRecordForm) {
+    return request({
+        url: "/student/queryPageWithStudentAdminStudentStatusRecord", method: 'GET', params: {
+            page: queryPageWithStudentAdminStudentStatusRecordForm.page,
+            pageSize: queryPageWithStudentAdminStudentStatusRecordForm.pageSize,
+            semester: queryPageWithStudentAdminStudentStatusRecordForm.semester,
+            week: queryPageWithStudentAdminStudentStatusRecordForm.week,
+            classNumber: queryPageWithStudentAdminStudentStatusRecordForm.classNumber,
+            studentNumber: queryPageWithStudentAdminStudentStatusRecordForm.studentNumber,
+            name: queryPageWithStudentAdminStudentStatusRecordForm.name,
+        }
+    })
+}

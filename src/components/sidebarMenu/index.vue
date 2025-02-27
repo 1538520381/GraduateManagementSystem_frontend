@@ -36,13 +36,18 @@ export default {
           url: '/studentAdminManagement'
         },
         {
-          title: '学生状态记录',
+          title: '学生状态总览',
           index: '2',
           userType: 'admin',
           url: '/studentStatusRecord'
         }, {
-          title: '实习申请管理',
+          title: '学生状态详情',
           index: '3',
+          userType: 'admin',
+          url: '/studentStatusRecordDetail'
+        }, {
+          title: '实习申请管理',
+          index: '4',
           userType: 'admin',
           url: '/internshipApplicationManagement'
         },
