@@ -17,7 +17,7 @@
         <div class="controlContainer">
           <el-button class="controlButton" type="primary" @click="queryPage">搜索</el-button>
         </div>
-        <div class="tableContainer">
+        <el-scrollbar class="tableContainer">
           <el-table class="table" ref="table" :data="studentList" empty-text="暂无学生">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column class="tableColumn" prop="classNumber" label="班级号"></el-table-column>
@@ -35,17 +35,19 @@
                   <el-button type="text" size="small" slot="reference">取消管理员</el-button>
                 </el-popconfirm>
                 <el-divider direction="vertical"></el-divider>
-                <el-button type="text" size="small" slot="reference" @click="openTeamMemberDialog(scope.row.id)">查看组员</el-button>
+                <el-button type="text" size="small" slot="reference" @click="openTeamMemberDialog(scope.row.id)">
+                  查看组员
+                </el-button>
               </template>
             </el-table-column>
           </el-table>
           <el-pagination
               :page-size="pageSize"
               :total="total"
-              layout="prev, pager, next"
+              layout="total,prev, pager, next"
               @current-change="selectPage">
           </el-pagination>
-        </div>
+        </el-scrollbar>
       </div>
     </div>
 
@@ -55,6 +57,11 @@
         <el-table-column class="tableColumn" prop="studentNumber" label="学号"></el-table-column>
         <el-table-column class="tableColumn" prop="name" label="姓名"></el-table-column>
       </el-table>
+      <el-pagination
+          style="width: 100%;text-align: center"
+          :total="teamMemberDialogData.studentList.length"
+          layout="total">
+      </el-pagination>
     </el-dialog>
   </div>
 </template>
@@ -87,7 +94,7 @@ export default {
       queryPageForm: {},
 
       page: 0,
-      pageSize: 5,
+      pageSize: 10,
       total: 0,
 
       teamMemberDialogVis: false,
@@ -250,6 +257,10 @@ export default {
 }
 
 #studentAdminManagement .middle .main {
+  display: inline-flex;
+
+  flex-flow: column;
+
   flex: 1;
 
   width: 0;
@@ -271,6 +282,11 @@ export default {
 }
 
 #studentAdminManagement .middle .main .tableContainer {
+  flex: 1;
+
+  width: 100%;
+  height: 0;
+
   text-align: center;
 }
 

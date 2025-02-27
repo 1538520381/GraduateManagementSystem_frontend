@@ -5,8 +5,10 @@
       <SidebarMenu userType="admin" active="3"></SidebarMenu>
       <div class="main">
         <div class="searchContainer">
-          <el-input class="searchInput" v-model="queryPageForm.classNumber" prefix-icon="el-icon-search"
-                    placeholder="班级号"></el-input>
+          <el-select class="searchInput" v-model="queryPageForm.classNumber" placeholder="请选择班级号" clearable>
+            <el-option v-for="item in studentClassNumberList" :key="item" :label="item"
+                       :value="item"></el-option>
+          </el-select>
           <el-input class="searchInput" v-model="queryPageForm.studentNumber" prefix-icon="el-icon-search"
                     placeholder="学号"></el-input>
           <el-input class="searchInput" v-model="queryPageForm.name" prefix-icon="el-icon-search"
@@ -19,11 +21,14 @@
         <div class="controlContainer">
           <el-button class="controlButton" type="primary" @click="queryPage">搜索</el-button>
         </div>
-        <div class="tableContainer">
+        <el-scrollbar class="tableContainer">
           <el-table class="table" ref="table" :data="internshipApplicationList" empty-text="暂无申请">
-            <el-table-column class="tableColumn" prop="student.classNumber" label="班级号" show-overflow-tooltip></el-table-column>
-            <el-table-column class="tableColumn" prop="student.studentNumber" label="学号" show-overflow-tooltip></el-table-column>
-            <el-table-column class="tableColumn" prop="student.name" label="姓名" show-overflow-tooltip></el-table-column>
+            <el-table-column class="tableColumn" prop="student.classNumber" label="班级号"
+                             show-overflow-tooltip></el-table-column>
+            <el-table-column class="tableColumn" prop="student.studentNumber" label="学号"
+                             show-overflow-tooltip></el-table-column>
+            <el-table-column class="tableColumn" prop="student.name" label="姓名"
+                             show-overflow-tooltip></el-table-column>
             <el-table-column class="tableColumn" label="实习开始时间" show-overflow-tooltip>
               <template slot-scope="scope">
                 {{ formatTimestamp(scope.row.internshipStartTime) }}
@@ -34,8 +39,10 @@
                 {{ formatTimestamp(scope.row.internshipEndTime) }}
               </template>
             </el-table-column>
-            <el-table-column class="tableColumn" prop="internshipUnit" label="实习单位名称" show-overflow-tooltip></el-table-column>
-            <el-table-column class="tableColumn" prop="createTime" label="申请时间" show-overflow-tooltip></el-table-column>
+            <el-table-column class="tableColumn" prop="internshipUnit" label="实习单位名称"
+                             show-overflow-tooltip></el-table-column>
+            <el-table-column class="tableColumn" prop="createTime" label="申请时间"
+                             show-overflow-tooltip></el-table-column>
             <el-table-column class="tableColumn" fixed="right" label="状态" show-overflow-tooltip>
               <template slot-scope="scope">
                 {{ internshipApplicationStatusDict[scope.row.status] }}
@@ -51,10 +58,10 @@
           <el-pagination
               :page-size="pageSize"
               :total="total"
-              layout="prev, pager, next"
+              layout="total,prev, pager, next"
               @current-change="selectPage">
           </el-pagination>
-        </div>
+        </el-scrollbar>
       </div>
     </div>
 
@@ -143,6 +150,7 @@ import {
 } from "@/apis/internshipApplication";
 import {formatTimestamp, isEmpty} from "@/utils/common";
 import FileContainer from "@/components/fileContainer/index.vue";
+import {studentGetClassNumberList} from "@/apis/student";
 
 export default {
   name: 'InternshipApplicationManagement',
@@ -152,9 +160,10 @@ export default {
       queryPageForm: {},
 
       internshipApplicationList: [],
+      studentClassNumberList: [],
 
       page: 0,
-      pageSize: 5,
+      pageSize: 10,
       total: 0,
 
       internshipApplicationDetailDialogVis: false,
@@ -192,6 +201,7 @@ export default {
     this.initUpdateInternshipApplicationForm()
 
     this.queryPage()
+    this.getClassNumberList()
   },
   methods: {
     formatTimestamp,
@@ -240,6 +250,19 @@ export default {
             this.page = res.data.queryPageWithoutStatus1WithStudentVOPage.pages
             this.queryPage()
           }
+        } else {
+          console.log(res)
+          this.$message.error(res.data.msg)
+        }
+      }).catch((err) => {
+        console.log(err)
+        this.$message.error("服务器异常，请联系管理员")
+      })
+    },
+    getClassNumberList() {
+      studentGetClassNumberList().then((res) => {
+        if (res.data.code === 200) {
+          this.studentClassNumberList = res.data.classNumberSet
         } else {
           console.log(res)
           this.$message.error(res.data.msg)
@@ -308,6 +331,10 @@ export default {
 }
 
 #internshipApplicationManagement .middle .main {
+  display: inline-flex;
+
+  flex-flow: column;
+
   flex: 1;
 
   width: 0;
@@ -329,6 +356,11 @@ export default {
 }
 
 #internshipApplicationManagement .middle .main .tableContainer {
+  flex: 1;
+
+  width: 100%;
+  height: 0;
+
   text-align: center;
 }
 

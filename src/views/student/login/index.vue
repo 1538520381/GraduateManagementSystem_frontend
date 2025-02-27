@@ -147,8 +147,8 @@ export default {
       })
     },
     updatePassword() {
-      let userType = localStorage.getItem('userType')
-      if (isEmpty(userType)) {
+      let token = localStorage.getItem('token')
+      if (isEmpty(token)) {
         this.studentAdminLoginTab()
         this.$message.error("请先登录")
         return;
@@ -257,6 +257,6 @@ export default {
 #studentLogin .loginContainer .formButton {
   margin: 5px 0 0 0;
 
-  width: 300px;
+  width: 100%;
 }
 </style>

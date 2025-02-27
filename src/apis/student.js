@@ -106,3 +106,9 @@ export function studentLogin(loginForm) {
         }
     })
 }
+
+export function studentGetClassNumberList() {
+    return request({
+        url: '/student/getClassNumberList', method: 'GET'
+    })
+}

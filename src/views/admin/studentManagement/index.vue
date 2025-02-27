@@ -5,8 +5,10 @@
       <SidebarMenu userType="admin" active="0"></SidebarMenu>
       <div class="main">
         <div class="searchContainer">
-          <el-input class="searchInput" v-model="queryPageForm.classNumber" prefix-icon="el-icon-search"
-                    placeholder="班级号"></el-input>
+          <el-select class="searchInput" v-model="queryPageForm.classNumber" placeholder="请选择班级号" clearable>
+            <el-option v-for="item in studentClassNumberList" :key="item" :label="item"
+                       :value="item"></el-option>
+          </el-select>
           <el-input class="searchInput" v-model="queryPageForm.studentNumber" prefix-icon="el-icon-search"
                     placeholder="学号"></el-input>
           <el-input class="searchInput" v-model="queryPageForm.name" prefix-icon="el-icon-search"
@@ -27,7 +29,7 @@
             <el-button class="controlButton" type="danger" slot="reference">批量删除</el-button>
           </el-popconfirm>
         </div>
-        <div class="tableContainer">
+        <el-scrollbar class="tableContainer">
           <el-table class="table" ref="table" :data="studentList" empty-text="暂无学生">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column class="tableColumn" prop="classNumber" label="班级号"></el-table-column>
@@ -62,10 +64,10 @@
           <el-pagination
               :page-size="pageSize"
               :total="total"
-              layout="prev, pager, next"
+              layout="total,prev, pager, next"
               @current-change="selectPage">
           </el-pagination>
-        </div>
+        </el-scrollbar>
       </div>
     </div>
   </div>
@@ -80,7 +82,7 @@ import {isEmpty} from "@/utils/common";
 import {
   studentAddList,
   studentDeleteById,
-  studentDeleteByIds,
+  studentDeleteByIds, studentGetClassNumberList, studentGetClassNumberListOfStudentAdmin,
   studentQueryPageWithStudentAdmin,
   studentSetType
 } from "@/apis/student";
@@ -97,11 +99,12 @@ export default {
       admin: null,
 
       studentList: [],
+      studentClassNumberList: [],
 
       queryPageForm: {},
 
       page: 0,
-      pageSize: 5,
+      pageSize: 10,
       total: 0,
 
       typeOptions: [
@@ -121,6 +124,7 @@ export default {
 
     this.initQueryPageForm()
     this.queryPage()
+    this.getClassNumberList()
   },
   methods: {
     isEmpty,
@@ -147,6 +151,7 @@ export default {
         this.$message.error("服务器异常，请联系管理员")
       })
     },
+
     queryPage() {
       studentQueryPageWithStudentAdmin({
         studentNumber: isEmpty(this.queryPageForm.studentNumber) ? null : this.queryPageForm.studentNumber.trim(),
@@ -163,6 +168,19 @@ export default {
             this.page = res.data.pageInfo.pages
             this.queryPage()
           }
+        } else {
+          console.log(res)
+          this.$message.error(res.data.msg)
+        }
+      }).catch((err) => {
+        console.log(err)
+        this.$message.error("服务器异常，请联系管理员")
+      })
+    },
+    getClassNumberList() {
+      studentGetClassNumberList().then((res) => {
+        if (res.data.code === 200) {
+          this.studentClassNumberList = res.data.classNumberSet
         } else {
           console.log(res)
           this.$message.error(res.data.msg)
@@ -371,6 +389,10 @@ export default {
 }
 
 #studentManagement .middle .main {
+  display: inline-flex;
+
+  flex-flow: column;
+
   flex: 1;
 
   width: 0;
@@ -392,6 +414,11 @@ export default {
 }
 
 #studentManagement .middle .main .tableContainer {
+  flex: 1;
+
+  width: 100%;
+  height: 0;
+
   text-align: center;
 }
 

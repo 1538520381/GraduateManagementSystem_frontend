@@ -6,8 +6,10 @@
       <div class="studentTable" v-if="studentTableTab === 0">
         <div class="main">
           <div class="searchContainer">
-            <el-input class="searchInput" v-model="queryPageForm.classNumber" prefix-icon="el-icon-search"
-                      placeholder="班级号"></el-input>
+            <el-select class="searchInput" v-model="queryPageForm.classNumber" placeholder="请选择班级号" clearable>
+              <el-option v-for="item in studentClassNumberList" :key="item" :label="item"
+                         :value="item"></el-option>
+            </el-select>
             <el-input class="searchInput" v-model="queryPageForm.studentNumber" prefix-icon="el-icon-search"
                       placeholder="学号"></el-input>
             <el-input class="searchInput" v-model="queryPageForm.name" prefix-icon="el-icon-search"
@@ -20,7 +22,7 @@
           <div class="controlContainer">
             <el-button class="controlButton" type="primary" @click="queryPage">搜索</el-button>
           </div>
-          <div class="tableContainer">
+          <el-scrollbar class="tableContainer">
             <el-table class="table" ref="table" :data="studentList" empty-text="暂无学生">
               <el-table-column type="selection" width="55"></el-table-column>
               <el-table-column class="tableColumn" prop="classNumber" label="班级号"></el-table-column>
@@ -53,16 +55,19 @@
                 :current-page="page"
                 :page-size="pageSize"
                 :total="total"
-                layout="prev, pager, next"
+                layout="total,prev, pager, next"
                 @current-change="selectPage">
             </el-pagination>
-          </div>
+          </el-scrollbar>
         </div>
       </div>
       <div class="studentStatusRecord" v-else-if="studentTableTab === 1">
         <el-page-header class="pageHeader" @back="selectStudentTable"
                         content="学生状态记录详情"></el-page-header>
         <el-form class="studentInformationForm">
+          <el-form-item class="studentInformationFormItem" label="学期">
+            2024~2025学年第2学期
+          </el-form-item>
           <el-form-item class="studentInformationFormItem" label="班级号">
             {{ studentStatusRecord.student.classNumber }}
           </el-form-item>
@@ -79,7 +84,7 @@
             <el-form class="studentStatusRecordForm">
               <el-form-item class="studentStatusRecordFormItem" label="时间">
                 {{
-                  item.studentAdminStudentStatusRecordDate.semester + " " + item.studentAdminStudentStatusRecordDate.week + "(" + formatTimestamp(item.studentAdminStudentStatusRecordDate.startTime) + ' — ' + formatTimestamp(item.studentAdminStudentStatusRecordDate.endTime) + ')'
+                  formatTimestamp(item.studentAdminStudentStatusRecordDate.startTime) + ' — ' + formatTimestamp(item.studentAdminStudentStatusRecordDate.endTime - 1)
                 }}
               </el-form-item>
               <div v-if="isEmpty(item.id)">
@@ -131,7 +136,7 @@
               <el-form class="studentQuestionnaireAnswerForm">
                 <el-form-item class="studentQuestionnaireAnswerFormItem" label="时间">
                   {{
-                    formatTimestamp(item1.startTime) + ' — ' + formatTimestamp(item1.endTime)
+                    formatTimestamp(item1.startTime) + ' — ' + formatTimestamp(item1.endTime - 1)
                   }}
                 </el-form-item>
                 <el-form-item class="studentQuestionnaireAnswerFormItem"
@@ -163,7 +168,7 @@ import SidebarMenu from "@/components/sidebarMenu/index.vue";
 import Header from "@/components/header/index.vue";
 
 import {formatTimestamp, isEmpty} from "@/utils/common";
-import {studentQueryPageWithStudentAdmin} from "@/apis/student";
+import {studentGetClassNumberList, studentQueryPageWithStudentAdmin} from "@/apis/student";
 import {adminGetAdminByToken} from "@/apis/admin";
 import {
   studentAdminStudentStatusRecordGetStudentAdminStudentStatusRecordByStudentIdToNowWithStudentAdminStudentStatusRecordDate
@@ -183,11 +188,12 @@ export default {
       studentTableTab: 0,
 
       studentList: [],
+      studentClassNumberList: [],
 
       queryPageForm: {},
 
       page: 0,
-      pageSize: 5,
+      pageSize: 10,
       total: 0,
 
       studentStatusRecord: {
@@ -219,6 +225,7 @@ export default {
 
     this.initQueryPageForm()
     this.queryPage()
+    this.getClassNumberList()
   },
   methods: {
     initQueryPageForm() {
@@ -261,6 +268,19 @@ export default {
             this.page = res.data.pageInfo.pages
             this.queryPage()
           }
+        } else {
+          console.log(res)
+          this.$message.error(res.data.msg)
+        }
+      }).catch((err) => {
+        console.log(err)
+        this.$message.error("服务器异常，请联系管理员")
+      })
+    },
+    getClassNumberList() {
+      studentGetClassNumberList().then((res) => {
+        if (res.data.code === 200) {
+          this.studentClassNumberList = res.data.classNumberSet
         } else {
           console.log(res)
           this.$message.error(res.data.msg)
@@ -398,6 +418,10 @@ export default {
 }
 
 #studentStatusRecord .middle .studentTable .main {
+  display: inline-flex;
+
+  flex-flow: column;
+
   width: 100%;
   height: 100%;
 }
@@ -417,6 +441,11 @@ export default {
 }
 
 #studentStatusRecord .middle .studentTable .main .tableContainer {
+  flex: 1;
+
+  width: 100%;
+  height: 0;
+
   text-align: center;
 }
 

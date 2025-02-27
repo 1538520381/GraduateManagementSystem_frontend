@@ -32,7 +32,7 @@
       </el-tab-pane>
       <el-tab-pane v-if="tabFlag === 2" label="首次登录修改密码">
         <el-input class="input" v-model="updatePasswordForm.password" placeholder="请输入密码"
-                  prefix-icon="el-icon-user" show-password></el-input>
+                  prefix-icon="el-icon-lock" show-password></el-input>
         <el-input class="input" v-model="updatePasswordForm.passwordAgain" placeholder="请再次输入密码"
                   prefix-icon="el-icon-lock" show-password></el-input>
         <el-button class="formButton" @click="updatePassword">确定</el-button>
@@ -292,9 +292,10 @@ export default {
 }
 
 #login .loginContainer {
-  position: absolute;
+  position: relative;
 
-  right: 100px;
+  margin: auto auto auto auto;
+
 
   background: white;
 }

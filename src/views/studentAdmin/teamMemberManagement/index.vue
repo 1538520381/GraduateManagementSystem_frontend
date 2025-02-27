@@ -37,6 +37,11 @@
                 </template>
               </el-table-column>
             </el-table>
+            <el-pagination
+                style="width: 100%;text-align: center"
+                :total="studentList.length"
+                layout="total">
+            </el-pagination>
           </el-scrollbar>
         </div>
       </div>
@@ -44,6 +49,9 @@
         <el-page-header class="pageHeader" @back="selectStudentTable"
                         content="学生状态记录详情"></el-page-header>
         <el-form class="studentInformationForm">
+          <el-form-item class="studentInformationFormItem" label="学期">
+            2024~2025学年第2学期
+          </el-form-item>
           <el-form-item class="studentInformationFormItem" label="班级号">
             {{ studentStatusRecord.student.classNumber }}
           </el-form-item>
@@ -60,7 +68,7 @@
             <el-form class="studentStatusRecordForm">
               <el-form-item class="studentStatusRecordFormItem" label="时间">
                 {{
-                  item.studentAdminStudentStatusRecordDate.semester + " " + item.studentAdminStudentStatusRecordDate.week + "(" + formatTimestamp(item.studentAdminStudentStatusRecordDate.startTime) + ' — ' + formatTimestamp(item.studentAdminStudentStatusRecordDate.endTime) + ')'
+                  formatTimestamp(item.studentAdminStudentStatusRecordDate.startTime) + ' — ' + formatTimestamp(item.studentAdminStudentStatusRecordDate.endTime - 1)
                 }}
               </el-form-item>
               <div v-if="isEmpty(item.id)">
@@ -126,6 +134,11 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination
+            style="width: 100%;text-align: center"
+            :total="teamMemberSelectionDialogData.studentList.length"
+            layout="total">
+        </el-pagination>
       </div>
     </el-dialog>
 
@@ -136,7 +149,7 @@
                v-if="!isEmpty(studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate)">
         <el-form-item class="studentStatusRecordFormItem" label="日期" label-width="150px">
           <div>{{
-              studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.semester + " " + studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.week + '(' + formatTimestamp(studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.startTime) + ' — ' + formatTimestamp(studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.endTime) + ')'
+              studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.semester + " " + studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.week + '(' + formatTimestamp(studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.startTime) + ' — ' + formatTimestamp(studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.endTime - 1) + ')'
             }}
           </div>
         </el-form-item>

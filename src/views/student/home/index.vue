@@ -1,6 +1,23 @@
 <template>
   <div id="studentHome">
     <StudentHeader title="首页"></StudentHeader>
+    <el-form class="internshipApplicationForm">
+      <el-form-item class="internshipApplicationFormItem" label="班级"
+                    :label-width="internshipApplicationFormItemLabelWidth">
+        <el-input class="internshipApplicationInput" v-model="student.classNumber"
+                  :disabled="true"></el-input>
+      </el-form-item>
+      <el-form-item class="internshipApplicationFormItem" label="学号"
+                    :label-width="internshipApplicationFormItemLabelWidth">
+        <el-input class="internshipApplicationInput" v-model="student.studentNumber"
+                  :disabled="true"></el-input>
+      </el-form-item>
+      <el-form-item class="internshipApplicationFormItem" label="姓名"
+                    :label-width="internshipApplicationFormItemLabelWidth">
+        <el-input class="internshipApplicationInput" v-model="student.name"
+                  :disabled="true"></el-input>
+      </el-form-item>
+    </el-form>
     <el-scrollbar class="middle">
       <div class="module" @click="toUrl(item.url)" v-for="(item,index) in moduleList">
         {{ item.name }}
@@ -18,7 +35,9 @@ export default {
   components: {StudentHeader},
   data() {
     return {
-      student: null,
+      student: {},
+
+      internshipApplicationFormItemLabelWidth: '50px',
 
       moduleList: [
         {
@@ -68,6 +87,21 @@ export default {
 
   width: 100%;
   height: 100%;
+}
+
+#studentHome .internshipApplicationForm {
+  margin: 20px auto 0 auto;
+
+  width: 90%;
+}
+
+#studentHome .internshipApplicationForm .internshipApplicationFormItem /deep/ .el-form-item__label {
+  white-space: pre-line;
+  text-justify: distribute-all-lines;
+}
+
+#studentHome .internshipApplicationForm .internshipApplicationFormItem .internshipApplicationInput {
+  width: 90%;
 }
 
 #studentHome .middle {

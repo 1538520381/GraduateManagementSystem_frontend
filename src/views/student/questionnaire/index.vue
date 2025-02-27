@@ -10,7 +10,7 @@
                 {{ item.name }}
               </el-form-item>
               <el-form-item class="questionnaireFormItem" label="填写期限">
-                {{ formatTimestamp(item.startTime) + " - " + formatTimestamp(item.endTime) }}
+                {{ formatTimestamp(item.startTime) + " - " + formatTimestamp(item.endTime - 1) }}
               </el-form-item>
               <el-form-item class="questionnaireFormItem" :style="{color: judgeQuestionnaireStatus(item).color}"
                             label="问卷状态">
@@ -24,6 +24,23 @@
         <el-page-header class="pageHeader" @back="toQuestionnaireList" content="问卷">
         </el-page-header>
         <el-scrollbar class="questionList">
+          <el-form class="internshipApplicationForm">
+            <el-form-item class="internshipApplicationFormItem" label="班级"
+                          :label-width="internshipApplicationFormItemLabelWidth">
+              <el-input class="internshipApplicationInput" v-model="internshipApplicationForm.classNumber"
+                        :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item class="internshipApplicationFormItem" label="学号"
+                          :label-width="internshipApplicationFormItemLabelWidth">
+              <el-input class="internshipApplicationInput" v-model="internshipApplicationForm.studentNumber"
+                        :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item class="internshipApplicationFormItem" label="姓名"
+                          :label-width="internshipApplicationFormItemLabelWidth">
+              <el-input class="internshipApplicationInput" v-model="internshipApplicationForm.name"
+                        :disabled="true"></el-input>
+            </el-form-item>
+          </el-form>
           <div class="question" v-for="(item,index) in questionnaireQuestionList">
             <div class="stem">{{ (index + 1) + ". " + item.stem }}</div>
             <el-input type="textarea" v-model="item.answer" maxlength="500" :disabled="questionnaireStatus === '已结束'"
@@ -63,11 +80,20 @@ export default {
         }
       ],
 
+      internshipApplicationForm: {},
+      internshipApplicationFormItemLabelWidth: '50px',
+
       tabFlag: 0
     }
   },
   async created() {
     await this.getStudentByToken()
+
+    this.internshipApplicationForm = {
+      classNumber: this.student.classNumber,
+      studentNumber: this.student.studentNumber,
+      name: this.student.name,
+    }
 
     this.getQuestionnaireListWithStudentQuestionnaireAnswerByStudentId()
   },
@@ -245,6 +271,21 @@ export default {
   height: 60px;
 
   line-height: 60px;
+}
+
+#questionnaire .middle .questionnaireMain .internshipApplicationForm {
+  margin: 20px auto 0 auto;
+
+  width: 90%;
+}
+
+#questionnaire .middle .questionnaireMain .internshipApplicationForm .internshipApplicationFormItem /deep/ .el-form-item__label {
+  white-space: pre-line;
+  text-justify: distribute-all-lines;
+}
+
+#questionnaire .middle .questionnaireMain .internshipApplicationForm .internshipApplicationFormItem .internshipApplicationInput {
+  width: 90%;
 }
 
 #questionnaire .middle .questionnaireMain .questionList {
