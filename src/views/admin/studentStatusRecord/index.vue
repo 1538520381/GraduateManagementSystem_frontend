@@ -87,7 +87,7 @@
             <el-form class="studentStatusRecordForm">
               <el-form-item class="studentStatusRecordFormItem" label="时间">
                 {{
-                  formatTimestamp(item.studentAdminStudentStatusRecordDate.startTime) + ' — ' + formatTimestamp(item.studentAdminStudentStatusRecordDate.endTime - 1)
+                  formatTimestamp(item.studentAdminStudentStatusRecordDate.startTime) + ' — ' + formatTimestamp(item.studentAdminStudentStatusRecordDate.endTime)
                 }}
               </el-form-item>
               <div v-if="isEmpty(item.id)">
@@ -139,7 +139,7 @@
               <el-form class="studentQuestionnaireAnswerForm">
                 <el-form-item class="studentQuestionnaireAnswerFormItem" label="时间">
                   {{
-                    formatTimestamp(item1.startTime) + ' — ' + formatTimestamp(item1.endTime - 1)
+                    formatTimestamp(item1.startTime) + ' — ' + formatTimestamp(item1.endTime)
                   }}
                 </el-form-item>
                 <el-form-item class="studentQuestionnaireAnswerFormItem"

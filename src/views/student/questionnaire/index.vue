@@ -10,7 +10,7 @@
                 {{ item.name }}
               </el-form-item>
               <el-form-item class="questionnaireFormItem" label="填写期限">
-                {{ formatTimestamp(item.startTime) + " - " + formatTimestamp(item.endTime - 1) }}
+                {{ formatTimestamp(item.startTime) + " - " + formatTimestamp(item.endTime) }}
               </el-form-item>
               <el-form-item class="questionnaireFormItem" :style="{color: judgeQuestionnaireStatus(item).color}"
                             label="问卷状态">

@@ -71,7 +71,7 @@
             <el-form class="studentStatusRecordForm">
               <el-form-item class="studentStatusRecordFormItem" label="时间">
                 {{
-                  formatTimestamp(item.studentAdminStudentStatusRecordDate.startTime) + ' — ' + formatTimestamp(item.studentAdminStudentStatusRecordDate.endTime - 1)
+                  formatTimestamp(item.studentAdminStudentStatusRecordDate.startTime) + ' — ' + formatTimestamp(item.studentAdminStudentStatusRecordDate.endTime)
                 }}
               </el-form-item>
               <div v-if="isEmpty(item.id)">
@@ -150,9 +150,15 @@
                :close-on-click-modal="false" width="600px">
       <el-form class="studentStatusRecordForm"
                v-if="!isEmpty(studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate)">
-        <el-form-item class="studentStatusRecordFormItem" label="日期" label-width="150px">
+        <el-form-item class="studentStatusRecordFormItem" label="周" label-width="150px">
           <div>{{
-              studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.semester + " " + studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.week + '(' + formatTimestamp(studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.startTime) + ' — ' + formatTimestamp(studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.endTime - 1) + ')'
+              studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.semester + " " + studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.week
+            }}
+          </div>
+        </el-form-item>
+        <el-form-item class="studentStatusRecordFormItem" label="时间" label-width="150px">
+          <div>{{
+              formatTimestamp(studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.startTime) + ' — ' + formatTimestamp(studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecordDate.endTime)
             }}
           </div>
         </el-form-item>
