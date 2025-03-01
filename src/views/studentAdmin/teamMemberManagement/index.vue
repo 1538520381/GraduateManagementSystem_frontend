@@ -50,7 +50,9 @@
                         content="学生状态记录详情"></el-page-header>
         <el-form class="studentInformationForm">
           <el-form-item class="studentInformationFormItem" label="学期">
-            2024~2025学年第2学期
+            <el-radio v-model="studentStatusRecord.semester" :label="index"
+                      v-for="(item,index) in studentStatusRecord.semesterList">{{ item }}
+            </el-radio>
           </el-form-item>
           <el-form-item class="studentInformationFormItem" label="班级号">
             {{ studentStatusRecord.student.classNumber }}
@@ -64,7 +66,8 @@
         </el-form>
         <el-tabs class="studentStatusRecordTabs" v-model="tabsActive" type="card">
           <el-tab-pane class="studentStatusRecordTab" v-for="(item,index) in studentStatusRecord.studentStatusRecords"
-                       :label="item.studentAdminStudentStatusRecordDate.week">
+                       :label="item.studentAdminStudentStatusRecordDate.week"
+                       v-if="item.studentAdminStudentStatusRecordDate.semester === studentStatusRecord.semesterList[studentStatusRecord.semester]">
             <el-form class="studentStatusRecordForm">
               <el-form-item class="studentStatusRecordFormItem" label="时间">
                 {{
@@ -282,7 +285,10 @@ export default {
       studentTableFlag: true,
       studentStatusRecord: {
         student: null,
-        studentStatusRecords: []
+        studentStatusRecords: [],
+        semesterList: [],
+        semester: 0,
+        tabsActive: '0',
       },
     }
   },
@@ -510,6 +516,14 @@ export default {
       studentAdminStudentStatusRecordGetStudentAdminStudentStatusRecordByStudentIdToNowWithStudentAdminStudentStatusRecordDate({studentId: studentId}).then((res) => {
         if (res.data.code === 200) {
           this.studentStatusRecord.studentStatusRecords = res.data.withStudentAdminStudentStatusRecordDateVOList
+          if (!isEmpty(this.studentStatusRecord.studentStatusRecords)) {
+            this.studentStatusRecord.semesterList = []
+            for (let i = 0; i < this.studentStatusRecord.studentStatusRecords.length; i++) {
+              if (this.studentStatusRecord.semesterList.indexOf(this.studentStatusRecord.studentStatusRecords[i].studentAdminStudentStatusRecordDate.semester) === -1) {
+                this.studentStatusRecord.semesterList.push(this.studentStatusRecord.studentStatusRecords[i].studentAdminStudentStatusRecordDate.semester)
+              }
+            }
+          }
         } else {
           console.log(res)
           this.$message.error(res.data.msg)
