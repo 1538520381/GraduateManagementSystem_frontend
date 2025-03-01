@@ -46,8 +46,13 @@ export default {
           userType: 'admin',
           url: '/studentStatusRecordDetail'
         }, {
-          title: '实习申请管理',
+          title: '状态填写时间设置',
           index: '4',
+          userType: 'admin',
+          url: '/studentStatusRecordDate'
+        }, {
+          title: '实习申请管理',
+          index: '5',
           userType: 'admin',
           url: '/internshipApplicationManagement'
         },

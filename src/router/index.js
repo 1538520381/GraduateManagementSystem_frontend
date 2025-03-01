@@ -25,6 +25,10 @@ export const constantRoutes = [{path: '/', redirect: '/login', hidden: true},
         path: '/studentStatusRecordDetail',
         name: 'StudentStatusRecordDetail',
         component: () => import('@/views/admin/studentStatusRecordDetail')
+    }, , {
+        path: '/studentStatusRecordDate',
+        name: 'StudentStatusRecordDate',
+        component: () => import('@/views/admin/studentStatusRecordDate')
     }, {
         path: '/internshipApplicationManagement',
         name: 'InternshipApplicationManagement',
