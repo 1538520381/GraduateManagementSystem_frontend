@@ -499,6 +499,10 @@ export default {
   width: 90%;
 }
 
+#studentStatusRecord .middle .studentTable .main .tableContainer .table /deep/ .el-table__row{
+    font-size: 12px;
+}
+
 #studentStatusRecord .middle .studentStatusRecord {
   flex: 1;
 
