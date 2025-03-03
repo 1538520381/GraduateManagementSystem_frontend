@@ -64,7 +64,7 @@
             {{ studentStatusRecord.student.name }}
           </el-form-item>
         </el-form>
-        <el-tabs class="studentStatusRecordTabs" v-model="tabsActive" type="card">
+        <el-tabs class="studentStatusRecordTabs" v-model="studentStatusRecord.tabsActive" type="card">
           <el-tab-pane class="studentStatusRecordTab" v-for="(item,index) in studentStatusRecord.studentStatusRecords"
                        :label="item.studentAdminStudentStatusRecordDate.week"
                        v-if="item.studentAdminStudentStatusRecordDate.semester === studentStatusRecord.semesterList[studentStatusRecord.semester]">
@@ -98,6 +98,11 @@
                 </el-form-item>
               </div>
             </el-form>
+            <div class="footer">
+              <el-button type="primary" @click="openUpdateStudentStatusRecordDialog(item,studentStatusRecord.student)">
+                修改
+              </el-button>
+            </div>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -221,6 +226,81 @@
       </el-form>
       <div v-else>暂无须填写学生状态记录</div>
     </el-dialog>
+
+    <el-dialog class="studentStatusRecordDialog" title="修改学生状态记录"
+               :visible.sync="updateStudentStatusRecordDialogVis"
+               :close-on-click-modal="false" width="600px">
+      <el-form class="studentStatusRecordForm">
+        <el-form-item class="studentStatusRecordFormItem" label="周" label-width="150px">
+          <div>{{
+              updateStudentStatusRecordDialogForm.semester + " " + updateStudentStatusRecordDialogForm.week
+            }}
+          </div>
+        </el-form-item>
+        <el-form-item class="studentStatusRecordFormItem" label="时间" label-width="150px">
+          <div>{{
+              formatTimestamp(updateStudentStatusRecordDialogForm.startTime) + ' — ' + formatTimestamp(updateStudentStatusRecordDialogForm.endTime)
+            }}
+          </div>
+        </el-form-item>
+        <el-form-item class="studentStatusRecordFormItem" label="学号" label-width="150px">
+          <el-input class="studentStatusRecordFormInput"
+                    v-model="updateStudentStatusRecordDialogForm.studentNumber"
+                    :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item class="studentStatusRecordFormItem" label="姓名" label-width="150px">
+          <el-input class="studentStatusRecordFormInput"
+                    v-model="updateStudentStatusRecordDialogForm.name"
+                    :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item class="studentStatusRecordFormItem" label="是否在校" label-width="150px">
+          <el-radio
+              v-model="updateStudentStatusRecordDialogForm.onCampusFlag"
+              :label="true">是
+          </el-radio>
+          <el-radio
+              v-model="updateStudentStatusRecordDialogForm.onCampusFlag"
+              :label="false">否
+          </el-radio>
+        </el-form-item>
+        <el-form-item class="studentStatusRecordFormItem" label="离校原因"
+                      v-if="updateStudentStatusRecordDialogForm.onCampusFlag === false"
+                      label-width="150px">
+          <el-input class="studentStatusRecordFormInput"
+                    v-model="updateStudentStatusRecordDialogForm.leavingSchoolReason"
+                    type="textarea" maxlength="500" placeholder="该生离校原因（上限500字）"></el-input>
+        </el-form-item>
+        <el-form-item class="studentStatusRecordFormItem" label="离校去向"
+                      v-if="updateStudentStatusRecordDialogForm.onCampusFlag === false"
+                      label-width="150px">
+          <el-input class="studentStatusRecordFormInput"
+                    v-model="updateStudentStatusRecordDialogForm.leavingSchoolDestination"
+                    type="textarea" maxlength="500" placeholder="该生离校去向（上限500字）"></el-input>
+        </el-form-item>
+        <el-form-item class="studentStatusRecordFormItem" label="科研进展情况" label-width="150px">
+          <el-input class="studentStatusRecordFormInput"
+                    v-model="updateStudentStatusRecordDialogForm.scientificResearchProgress"
+                    type="textarea" maxlength="500"
+                    placeholder="该生科研进展情况(越详细越好，包括大小论文进展专利情况等)（上限500字）"></el-input>
+        </el-form-item>
+        <el-form-item class="studentStatusRecordFormItem" label="性格、优缺点" label-width="150px">
+          <el-input class="studentStatusRecordFormInput"
+                    v-model="updateStudentStatusRecordDialogForm.personalityTraits"
+                    type="textarea" maxlength="500"
+                    placeholder="据你接触该生是个什么性格的人，有什么优缺点（上限500字）"></el-input>
+        </el-form-item>
+        <el-form-item class="studentStatusRecordFormItem" label="需要特别关注的问题" label-width="150px">
+          <el-input class="studentStatusRecordFormInput"
+                    v-model="updateStudentStatusRecordDialogForm.abnormalIssues"
+                    type="textarea" maxlength="500"
+                    placeholder="该生目前有无需要特别去关心的问题（上限500字）"></el-input>
+        </el-form-item>
+        <div class="footer">
+          <el-button @click="closeUpdateStudentStatusRecordDialog">取消</el-button>
+          <el-button type="primary" @click="pastStudentAdminStudentStatusRecordUpdate">确定</el-button>
+        </div>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -296,6 +376,26 @@ export default {
         semester: 0,
         tabsActive: '0',
       },
+
+      updateStudentStatusRecordDialogVis: false,
+      updateStudentStatusRecordDialogForm: {
+        studentAdminStudentStatusRecordDateId: null,
+        semester: null,
+        week: null,
+        startTime: null,
+        endTime: null,
+
+        studentId: null,
+        studentNumber: null,
+        name: null,
+
+        onCampusFlag: null,
+        leavingSchoolReason: null,
+        leavingSchoolDestination: null,
+        scientificResearchProgress: null,
+        personalityTraits: null,
+        abnormalIssues: null,
+      },
     }
   },
   async created() {
@@ -343,6 +443,26 @@ export default {
           personalityTraits: null,
           abnormalIssues: null,
         }
+      }
+    },
+    initUpdateStudentStatusRecordDialogForm() {
+      this.updateStudentStatusRecordDialogForm = {
+        studentAdminStudentStatusRecordDateId: null,
+        semester: null,
+        week: null,
+        startTime: null,
+        endTime: null,
+
+        studentId: null,
+        studentNumber: null,
+        name: null,
+
+        onCampusFlag: null,
+        leavingSchoolReason: null,
+        leavingSchoolDestination: null,
+        scientificResearchProgress: null,
+        personalityTraits: null,
+        abnormalIssues: null,
       }
     },
 
@@ -518,6 +638,57 @@ export default {
         this.$message.error("服务器异常，请联系管理员")
       })
     },
+    pastStudentAdminStudentStatusRecordUpdate() {
+      if (isEmpty(this.updateStudentStatusRecordDialogForm.studentId)) {
+        this.$message.error("服务器异常")
+        return
+      } else if (isEmpty(this.updateStudentStatusRecordDialogForm.studentAdminStudentStatusRecordDateId)) {
+        this.$message.error("服务器异常")
+        return;
+      } else if (isEmpty(this.updateStudentStatusRecordDialogForm.onCampusFlag)) {
+        this.$message.error("是否在校不能为空")
+        return;
+      } else if (!this.updateStudentStatusRecordDialogForm.onCampusFlag && isEmpty(this.updateStudentStatusRecordDialogForm.leavingSchoolReason)) {
+        this.$message.error("学生若离校离校原因不能为空");
+        return;
+      } else if (!this.updateStudentStatusRecordDialogForm.onCampusFlag && isEmpty(this.updateStudentStatusRecordDialogForm.leavingSchoolDestination)) {
+        this.$message.error("学生若离校离校去向不能为空");
+        return;
+      } else if (isEmpty(this.updateStudentStatusRecordDialogForm.scientificResearchProgress)) {
+        this.$message.error("科研进展情况不能为空")
+        return;
+      } else if (isEmpty(this.updateStudentStatusRecordDialogForm.personalityTraits)) {
+        this.$message.error("性格、优缺点不能为空")
+        return;
+      } else if (isEmpty(this.updateStudentStatusRecordDialogForm.abnormalIssues)) {
+        this.$message.error("需要特别关注的问题不能为空")
+        return;
+      }
+
+      studentAdminStudentStatusRecordUpdate({
+        studentAdminId: this.student.id,
+        studentId: this.updateStudentStatusRecordDialogForm.studentId,
+        studentAdminStudentStatusRecordDateId: this.updateStudentStatusRecordDialogForm.studentAdminStudentStatusRecordDateId,
+        onCampusFlag: this.updateStudentStatusRecordDialogForm.onCampusFlag,
+        leavingSchoolReason: this.updateStudentStatusRecordDialogForm.leavingSchoolReason,
+        leavingSchoolDestination: this.updateStudentStatusRecordDialogForm.leavingSchoolDestination,
+        scientificResearchProgress: this.updateStudentStatusRecordDialogForm.scientificResearchProgress,
+        personalityTraits: this.updateStudentStatusRecordDialogForm.personalityTraits,
+        abnormalIssues: this.updateStudentStatusRecordDialogForm.abnormalIssues,
+      }).then((res) => {
+        if (res.data.code === 200) {
+          this.closeUpdateStudentStatusRecordDialog()
+          this.getStudentAdminStudentStatusRecordByStudentIdAndNowWithStudentAdminStudentStatusRecordDate(this.studentStatusRecord.student.id)
+          this.$message.success("记录成功")
+        } else {
+          console.log(res)
+          this.$message.error(res.data.msg)
+        }
+      }).catch((err) => {
+        console.log(err)
+        this.$message.error("服务器异常，请联系管理员")
+      })
+    },
     getStudentAdminStudentStatusRecordByStudentIdAndNowWithStudentAdminStudentStatusRecordDate(studentId) {
       studentAdminStudentStatusRecordGetStudentAdminStudentStatusRecordByStudentIdToNowWithStudentAdminStudentStatusRecordDate({studentId: studentId}).then((res) => {
         if (res.data.code === 200) {
@@ -559,11 +730,8 @@ export default {
       }).then((res) => {
         if (res.data.code === 200) {
           if (!isEmpty(res.data.studentAdminStudentStatusRecord)) {
-            console.log(JSON.stringify(this.studentStatusRecordDialogData))
             this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.scientificResearchProgress = res.data.studentAdminStudentStatusRecord.scientificResearchProgress
-            console.log(JSON.stringify(this.studentStatusRecordDialogData))
             this.studentStatusRecordDialogData.studentStatusRecordForm.studentAdminStudentStatusRecord.personalityTraits = res.data.studentAdminStudentStatusRecord.personalityTraits
-            console.log(JSON.stringify(this.studentStatusRecordDialogData))
           }
         } else {
           console.log(res)
@@ -580,6 +748,27 @@ export default {
     },
     closeStudentStatusRecordDialog() {
       this.studentStatusRecordDialogVis = false
+    },
+    openUpdateStudentStatusRecordDialog(item, student) {
+      this.initUpdateStudentStatusRecordDialogForm()
+      this.updateStudentStatusRecordDialogForm.studentAdminStudentStatusRecordDateId = item.studentAdminStudentStatusRecordDate.id;
+      this.updateStudentStatusRecordDialogForm.semester = item.studentAdminStudentStatusRecordDate.semester;
+      this.updateStudentStatusRecordDialogForm.week = item.studentAdminStudentStatusRecordDate.week;
+      this.updateStudentStatusRecordDialogForm.startTime = item.studentAdminStudentStatusRecordDate.startTime;
+      this.updateStudentStatusRecordDialogForm.endTime = item.studentAdminStudentStatusRecordDate.endTime;
+      this.updateStudentStatusRecordDialogForm.studentId = student.id;
+      this.updateStudentStatusRecordDialogForm.studentNumber = student.studentNumber;
+      this.updateStudentStatusRecordDialogForm.name = student.name;
+      this.updateStudentStatusRecordDialogForm.onCampusFlag = item.onCampusFlag;
+      this.updateStudentStatusRecordDialogForm.leavingSchoolReason = item.leavingSchoolReason;
+      this.updateStudentStatusRecordDialogForm.leavingSchoolDestination = item.leavingSchoolDestination;
+      this.updateStudentStatusRecordDialogForm.scientificResearchProgress = item.scientificResearchProgress;
+      this.updateStudentStatusRecordDialogForm.personalityTraits = item.personalityTraits;
+      this.updateStudentStatusRecordDialogForm.abnormalIssues = item.abnormalIssues;
+      this.updateStudentStatusRecordDialogVis = true;
+    },
+    closeUpdateStudentStatusRecordDialog() {
+      this.updateStudentStatusRecordDialogVis = false
     },
 
     selectStudentTable() {
@@ -695,6 +884,12 @@ export default {
 
 #teamMemberManagement .middle .studentStatusRecord .studentStatusRecordTabs .studentStatusRecordTab .studentStatusRecordForm .studentStatusRecordFormItem {
   margin: 0 0 0 0;
+}
+
+#teamMemberManagement .middle .studentStatusRecord .studentStatusRecordTabs .studentStatusRecordTab .footer {
+  width: 100%;
+
+  margin: 10px 10px 0 10px;
 }
 
 #teamMemberManagement .teamMemberSelectionDialog /deep/ .el-dialog__body {
