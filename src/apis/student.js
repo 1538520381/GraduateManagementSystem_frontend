@@ -126,3 +126,17 @@ export function studentQueryPageWithStudentAdminStudentStatusRecord(queryPageWit
         }
     })
 }
+
+export function studentQueryListWithStudentAdminStudentStatusRecord(queryListWithStudentAdminStudentStatusRecordForm) {
+    return request({
+        url: "/student/queryListWithStudentAdminStudentStatusRecord", method: 'GET', params: {
+            page: queryListWithStudentAdminStudentStatusRecordForm.page,
+            pageSize: queryListWithStudentAdminStudentStatusRecordForm.pageSize,
+            semester: queryListWithStudentAdminStudentStatusRecordForm.semester,
+            week: queryListWithStudentAdminStudentStatusRecordForm.week,
+            classNumber: queryListWithStudentAdminStudentStatusRecordForm.classNumber,
+            studentNumber: queryListWithStudentAdminStudentStatusRecordForm.studentNumber,
+            name: queryListWithStudentAdminStudentStatusRecordForm.name,
+        }
+    })
+}

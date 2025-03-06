@@ -30,6 +30,8 @@
           </div>
           <div class="controlContainer">
             <el-button class="controlButton" type="primary" @click="queryPage">搜索</el-button>
+            <el-button class="controlButton" type="primary" @click="downloadStudentAdminStudentStatusRecordExcel">导出
+            </el-button>
           </div>
           <el-scrollbar class="tableContainer">
             <el-table class="table" ref="table" :data="studentList" empty-text="暂无学生">
@@ -178,7 +180,7 @@ import Header from "@/components/header/index.vue";
 
 import {formatTimestamp, isEmpty} from "@/utils/common";
 import {
-  studentGetClassNumberList,
+  studentGetClassNumberList, studentQueryListWithStudentAdminStudentStatusRecord,
   studentQueryPageWithStudentAdmin,
   studentQueryPageWithStudentAdminStudentStatusRecord
 } from "@/apis/student";
@@ -188,6 +190,7 @@ import {
 } from "@/apis/studentAdminStudentStatusRecord";
 import {questionnaireGetListWithStudentQuestionnaireAnswerByStudentId} from "@/apis/questionnaire";
 import {studentAdminStudentStatusRecordDateGetList} from "@/apis/studentAdminStudentStatusRecordDate";
+import XLSX from "xlsx";
 
 export default {
   name: 'StudentStatusRecord',
@@ -380,6 +383,54 @@ export default {
         this.$message.error("服务器异常，请联系管理员")
       })
     },
+    downloadStudentAdminStudentStatusRecordExcel() {
+      const XLSX = require("xlsx");
+      const workbook = XLSX.utils.book_new();
+
+      let mainSheetData = [];
+      let columnName = ['班级号', '学号', '姓名', '所属管理员', '是否在校', '离校原因', '离校去向', '科研进展情况', '性格、优缺点', '需要特别关注的问题'];
+      mainSheetData.push(columnName)
+
+      if (isEmpty(this.queryPageForm.semester) || isEmpty(this.queryPageForm.week)) {
+        this.$message.error("系统异常")
+        return
+      }
+      studentQueryListWithStudentAdminStudentStatusRecord({
+        semester: this.queryPageForm.semester,
+        week: this.queryPageForm.week,
+        studentNumber: isEmpty(this.queryPageForm.studentNumber) ? null : this.queryPageForm.studentNumber.trim(),
+        name: isEmpty(this.queryPageForm.name) ? null : this.queryPageForm.name.trim(),
+        classNumber: isEmpty(this.queryPageForm.classNumber) ? null : this.queryPageForm.classNumber.trim(),
+      }).then((res) => {
+        if (res.data.code === 200) {
+          for (let i = 0; i < res.data.studentList.length; i++) {
+            mainSheetData.push([
+              res.data.studentList[i].classNumber,
+              res.data.studentList[i].studentNumber,
+              res.data.studentList[i].name,
+              (isEmpty(res.data.studentList[i].studentAdmin) ? '暂无分组' : res.data.studentList[i].studentAdmin.name),
+              (isEmpty(res.data.studentList[i].studentAdminStudentStatusRecord) ? null : (res.data.studentList[i].studentAdminStudentStatusRecord.onCampusFlag ? '是' : '否')),
+              (isEmpty(res.data.studentList[i].studentAdminStudentStatusRecord) ? null : res.data.studentList[i].studentAdminStudentStatusRecord.leavingSchoolReason),
+              (isEmpty(res.data.studentList[i].studentAdminStudentStatusRecord) ? null : res.data.studentList[i].studentAdminStudentStatusRecord.leavingSchoolDestillnation),
+              (isEmpty(res.data.studentList[i].studentAdminStudentStatusRecord) ? null : res.data.studentList[i].studentAdminStudentStatusRecord.scientificResearchProgress),
+              (isEmpty(res.data.studentList[i].studentAdminStudentStatusRecord) ? null : res.data.studentList[i].studentAdminStudentStatusRecord.personalityTraits),
+              (isEmpty(res.data.studentList[i].studentAdminStudentStatusRecord) ? null : res.data.studentList[i].studentAdminStudentStatusRecord.abnormalIssues),
+            ])
+          }
+          const mainSheet = XLSX.utils.aoa_to_sheet(mainSheetData);
+
+          XLSX.utils.book_append_sheet(workbook, mainSheet, "主表");
+
+          XLSX.writeFile(workbook, "学生状态信息表.xlsx");
+        } else {
+          console.log(res)
+          this.$message.error(res.data.msg)
+        }
+      }).catch((err) => {
+        console.log(err)
+        this.$message.error("服务器异常，请联系管理员")
+      })
+    },
 
     selectPage(page) {
       this.page = page
@@ -499,8 +550,8 @@ export default {
   width: 90%;
 }
 
-#studentStatusRecord .middle .studentTable .main .tableContainer .table /deep/ .el-table__row{
-    font-size: 12px;
+#studentStatusRecord .middle .studentTable .main .tableContainer .table /deep/ .el-table__row {
+  font-size: 12px;
 }
 
 #studentStatusRecord .middle .studentStatusRecord {
