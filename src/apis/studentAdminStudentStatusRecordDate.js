@@ -30,7 +30,11 @@ export function studentAdminStudentStatusRecordDateDeleteById(deleteByIdForm) {
 export function studentAdminStudentStatusRecordDateAdd(addForm) {
     return request({
         url: '/studentAdminStudentStatusRecordDate/add', method: 'POST', data: {
-            startTime: addForm.startTime, endTime: addForm.endTime, semester: addForm.semester, week: addForm.week
+            startTime: addForm.startTime,
+            endTime: addForm.endTime,
+            semester: addForm.semester,
+            week: addForm.week,
+            problems: addForm.problems
         }
     })
 }

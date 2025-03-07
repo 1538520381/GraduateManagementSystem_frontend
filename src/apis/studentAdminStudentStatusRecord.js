@@ -9,9 +9,16 @@ export function studentAdminStudentStatusRecordUpdate(studentAdminStudentStatusR
             onCampusFlag: studentAdminStudentStatusRecordUpdateForm.onCampusFlag,
             leavingSchoolReason: studentAdminStudentStatusRecordUpdateForm.leavingSchoolReason,
             leavingSchoolDestination: studentAdminStudentStatusRecordUpdateForm.leavingSchoolDestination,
-            scientificResearchProgress: studentAdminStudentStatusRecordUpdateForm.scientificResearchProgress,
-            personalityTraits: studentAdminStudentStatusRecordUpdateForm.personalityTraits,
-            abnormalIssues: studentAdminStudentStatusRecordUpdateForm.abnormalIssues,
+            problem1: studentAdminStudentStatusRecordUpdateForm.problem1,
+            problem2: studentAdminStudentStatusRecordUpdateForm.problem2,
+            problem3: studentAdminStudentStatusRecordUpdateForm.problem3,
+            problem4: studentAdminStudentStatusRecordUpdateForm.problem4,
+            problem5: studentAdminStudentStatusRecordUpdateForm.problem5,
+            problem6: studentAdminStudentStatusRecordUpdateForm.problem6,
+            problem7: studentAdminStudentStatusRecordUpdateForm.problem7,
+            problem8: studentAdminStudentStatusRecordUpdateForm.problem8,
+            problem9: studentAdminStudentStatusRecordUpdateForm.problem9,
+            problem10: studentAdminStudentStatusRecordUpdateForm.problem10,
         }
     })
 }

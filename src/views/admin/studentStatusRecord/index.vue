@@ -61,7 +61,7 @@
           </el-scrollbar>
         </div>
       </div>
-      <div class="studentStatusRecord" v-else-if="studentTableTab === 1">
+      <el-scrollbar class="studentStatusRecord" v-else-if="studentTableTab === 1">
         <el-page-header class="pageHeader" @back="selectStudentTable"
                         content="学生状态记录详情"></el-page-header>
         <el-form class="studentInformationForm">
@@ -80,8 +80,11 @@
             {{ studentStatusRecord.student.name }}
           </el-form-item>
         </el-form>
-        <el-tabs class="studentStatusRecordTabs" v-model="studentStatusRecord.tabsActive" type="card">
+        <el-tabs class="studentStatusRecordTabs" v-model="studentStatusRecord.tabsActive" type="card"
+                 @tab-click="selectStudentStatusRecordTab">
           <el-tab-pane class="studentStatusRecordTab" v-for="(item,index) in studentStatusRecord.studentStatusRecords"
+                       :key="index"
+                       :name="String(index)"
                        :label="item.studentAdminStudentStatusRecordDate.week"
                        v-if="item.studentAdminStudentStatusRecordDate.semester === studentStatusRecord.semesterList[studentStatusRecord.semester]">
             <el-form class="studentStatusRecordForm">
@@ -103,20 +106,15 @@
                 <el-form-item class="studentStatusRecordFormItem" label="离校去向" v-if="!item.onCampusFlag">
                   {{ item.leavingSchoolDestination }}
                 </el-form-item>
-                <el-form-item class="studentStatusRecordFormItem" label="科研进展情况">
-                  {{ item.scientificResearchProgress }}
-                </el-form-item>
-                <el-form-item class="studentStatusRecordFormItem" label="性格、优缺点">
-                  {{ item.personalityTraits }}
-                </el-form-item>
-                <el-form-item class="studentStatusRecordFormItem" label="需要特别关注的问题">
-                  {{ item.abnormalIssues }}
+                <el-form-item class="studentStatusRecordFormItem" :label="item1.stem"
+                              v-for="(item1,index) in studentStatusRecord.studentAdminStudentStatusRecordNameList">
+                  {{ item['problem' + (index + 1)] }}
                 </el-form-item>
               </div>
             </el-form>
           </el-tab-pane>
         </el-tabs>
-      </div>
+      </el-scrollbar>
       <div class="studentQuestionnaireAnswer" v-else-if="studentTableTab === 2">
         <el-page-header class="pageHeader" @back="selectStudentTable"
                         content="问卷结果详情"></el-page-header>
@@ -177,6 +175,9 @@ import {
   studentAdminStudentStatusRecordGetStudentAdminStudentStatusRecordByStudentIdToNowWithStudentAdminStudentStatusRecordDate
 } from "@/apis/studentAdminStudentStatusRecord";
 import {questionnaireGetListWithStudentQuestionnaireAnswerByStudentId} from "@/apis/questionnaire";
+import {
+  studentAdminStudentStatusRecordNameGetByStudentAdminStudentStatusrRecordDateId
+} from "@/apis/studentAdminStudentStatusRecordName";
 
 export default {
   name: 'StudentStatusRecord',
@@ -203,6 +204,7 @@ export default {
         student: null,
         studentStatusRecords: [],
         semesterList: [],
+        studentAdminStudentStatusRecordNameList: [],
         tabsActive: '0',
         semester: 0,
       },
@@ -306,6 +308,7 @@ export default {
                 this.studentStatusRecord.semesterList.push(this.studentStatusRecord.studentStatusRecords[i].studentAdminStudentStatusRecordDate.semester)
               }
             }
+            this.getStudentAdminStudentStatusRecordNameByStudentAdminStudentStatusrRecordDateId(this.studentStatusRecord.studentStatusRecords[0].studentAdminStudentStatusRecordDate.id);
           }
         } else {
           console.log(res)
@@ -339,7 +342,23 @@ export default {
               }
             }
           }
-          console.log(this.studentQuestionnaireAnswer.questionnaireList)
+        } else {
+          console.log(res)
+          this.$message.error(res.data.msg)
+        }
+      }).catch((err) => {
+        console.log(err)
+        this.$message.error("服务器异常，请联系管理员")
+      })
+    },
+    getStudentAdminStudentStatusRecordNameByStudentAdminStudentStatusrRecordDateId(studentAdminStudentStatusrRecordDateId) {
+      studentAdminStudentStatusRecordNameGetByStudentAdminStudentStatusrRecordDateId({
+        studentAdminStudentStatusrRecordDateId: studentAdminStudentStatusrRecordDateId
+      }).then((res) => {
+        if (res.data.code === 200) {
+          this.studentStatusRecord.studentAdminStudentStatusRecordNameList = res.data.studentAdminStudentStatusRecordNameList.sort((o1, o2) => {
+            return o1.sort - o2.sort;
+          })
         } else {
           console.log(res)
           this.$message.error(res.data.msg)
@@ -360,12 +379,17 @@ export default {
     selectStudentStatusRecord(student) {
       this.studentTableTab = 1
       this.studentStatusRecord.student = student
+      this.studentStatusRecord.tabsActive = '0'
+      this.studentStatusRecord.semester = 0
       this.getStudentAdminStudentStatusRecordByStudentIdAndNowWithStudentAdminStudentStatusRecordDate(student.id)
     },
     selectStudentQuestionnaireAnswer(student) {
       this.studentTableTab = 2
       this.studentQuestionnaireAnswer.student = student
       this.getQuestionnaireListWithStudentQuestionnaireAnswerByStudentId()
+    },
+    selectStudentStatusRecordTabs(tab, event) {
+      console.log(this.studentStatusRecord.tabsActive);
     },
 
     judgeQuestionnaireStatus(questionnaire) {
@@ -390,6 +414,10 @@ export default {
           color: "#43BE86"
         }
       }
+    },
+
+    selectStudentStatusRecordTab(tab, event) {
+      this.getStudentAdminStudentStatusRecordNameByStudentAdminStudentStatusrRecordDateId(this.studentStatusRecord.studentStatusRecords[parseInt(tab.name)].studentAdminStudentStatusRecordDate.id)
     },
 
     toLogin() {
