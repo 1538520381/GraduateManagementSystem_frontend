@@ -206,7 +206,7 @@ export default {
     },
 
     toLogin() {
-      this.$router.push("/login")
+      this.$router.push("/student/login")
     },
 
     formatTimestamp,

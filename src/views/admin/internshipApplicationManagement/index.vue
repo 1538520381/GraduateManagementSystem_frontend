@@ -307,6 +307,10 @@ export default {
       this.page = page
       this.queryPage()
     },
+
+    toLogin() {
+      this.$router.push("/login")
+    },
   }
 }
 </script>

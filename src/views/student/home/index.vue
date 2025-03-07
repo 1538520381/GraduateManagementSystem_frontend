@@ -74,7 +74,11 @@ export default {
       if (window.location.pathname !== url) {
         this.$router.push(url)
       }
-    }
+    },
+
+    toLogin() {
+      this.$router.push("/student/login")
+    },
   }
 }
 </script>

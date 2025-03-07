@@ -279,6 +279,10 @@ export default {
       this.updateStudentStatusRecordDateDialogVis = true
     },
 
+    toLogin() {
+      this.$router.push("/login")
+    },
+
     formatTimestamp,
   }
 }

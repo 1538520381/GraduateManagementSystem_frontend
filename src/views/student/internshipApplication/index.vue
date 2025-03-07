@@ -338,6 +338,10 @@ export default {
       this.$router.push("/student/home")
     },
 
+    toLogin() {
+      this.$router.push("/student/login")
+    },
+
     isEmpty,
   }
 }
