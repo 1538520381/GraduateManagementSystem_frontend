@@ -200,7 +200,6 @@ export default {
             this.page = res.data.pageInfo.pages
             this.getStudentAdminStudentStatusRecordDatePage()
           }
-          console.log(this.studentAdminStudentStatusRecordDateList)
         } else {
           console.log(res)
           this.$message.error(res.data.msg)

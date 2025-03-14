@@ -51,8 +51,13 @@ export default {
           userType: 'admin',
           url: '/studentStatusRecordDate'
         }, {
-          title: '实习申请管理',
+          title: '问卷设置',
           index: '5',
+          userType: 'admin',
+          url: '/questionnaireManagement'
+        }, {
+          title: '实习申请管理',
+          index: '6',
           userType: 'admin',
           url: '/internshipApplicationManagement'
         },

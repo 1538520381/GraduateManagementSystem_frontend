@@ -348,7 +348,7 @@ export default {
       const workbook = XLSX.utils.book_new();
 
       let mainSheetData = [];
-      let columnName = ['班级号', '学号', '姓名', '所属管理员', '是否在校', '离校原因', '离校去向'];
+      let columnName = ['学期', '周', '班级号', '学号', '姓名', '所属管理员', '是否在校', '离校原因', '离校去向'];
       mainSheetData.push(columnName)
 
       if (isEmpty(this.queryPageForm.semester) || isEmpty(this.queryPageForm.week)) {
@@ -378,17 +378,19 @@ export default {
             if (res.data.code === 200) {
               for (let i = 0; i < res.data.studentList.length; i++) {
                 let row = [
+                  this.queryPageForm.semester,
+                  this.queryPageForm.week,
                   res.data.studentList[i].classNumber,
                   res.data.studentList[i].studentNumber,
                   res.data.studentList[i].name,
                   (isEmpty(res.data.studentList[i].studentAdmin) ? '暂无分组' : res.data.studentList[i].studentAdmin.name),
                   (isEmpty(res.data.studentList[i].studentAdminStudentStatusRecord) ? null : (res.data.studentList[i].studentAdminStudentStatusRecord.onCampusFlag ? '是' : '否')),
                   (isEmpty(res.data.studentList[i].studentAdminStudentStatusRecord) ? null : res.data.studentList[i].studentAdminStudentStatusRecord.leavingSchoolReason),
-                  (isEmpty(res.data.studentList[i].studentAdminStudentStatusRecord) ? null : res.data.studentList[i].studentAdminStudentStatusRecord.leavingSchoolDestillnation)
+                  (isEmpty(res.data.studentList[i].studentAdminStudentStatusRecord) ? null : res.data.studentList[i].studentAdminStudentStatusRecord.leavingSchoolDestination)
                 ]
 
                 for (let j = 0; j < studentAdminStudentStatusRecordNameList.length; j++) {
-                  row.push((isEmpty(res.data.studentList[i]['problem' + (j + 1)]) ? null : res.data.studentList[i]['problem' + (j + 1)]))
+                  row.push((isEmpty(res.data.studentList[i].studentAdminStudentStatusRecord) ? null : res.data.studentList[i].studentAdminStudentStatusRecord['problem' + (j + 1)]))
                 }
 
                 mainSheetData.push(row)

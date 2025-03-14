@@ -2,7 +2,7 @@
   <div id="internshipApplicationManagement">
     <Header></Header>
     <div class="middle">
-      <SidebarMenu userType="admin" active="5"></SidebarMenu>
+      <SidebarMenu userType="admin" active="6"></SidebarMenu>
       <div class="main">
         <div class="searchContainer">
           <el-select class="searchInput" v-model="queryPageForm.classNumber" placeholder="请选择班级号" clearable>

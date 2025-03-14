@@ -7,5 +7,27 @@ export function questionnaireGetListWithStudentQuestionnaireAnswerByStudentId(ge
     })
 }
 
-export class questionnaireAddList {
+export function questionnaireGetPage(getPageForm) {
+    return request({
+        url: '/questionnaire/getPage', method: "GET", params: {
+            page: getPageForm.page, pageSize: getPageForm.pageSize
+        }
+    })
+}
+
+export function questionnaireAdd(addForm) {
+    return request({
+        url: '/questionnaire/add', method: 'POST', data: {
+            name: addForm.name,
+            startTime: addForm.startTime,
+            endTime: addForm.endTime,
+            questionList: addForm.questionList
+        }
+    })
+}
+
+export function questionnaireDeleteById(deleteByIdForm) {
+    return request({
+        url: '/questionnaire/deleteById/' + deleteByIdForm.id, method: 'DELETE'
+    })
 }

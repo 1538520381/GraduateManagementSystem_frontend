@@ -2,13 +2,17 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 
 import Login from '@/views/login/index.vue'
+
 import StudentManagement from "@/views/admin/studentManagement/index.vue";
 import StudentAdminManagement from "@/views/admin/studentAdminManagement/index.vue";
 import StudentStatusRecord from "@/views/admin/studentStatusRecord/index.vue";
 import StudentStatusRecordDetail from "@/views/admin/studentStatusRecordDetail/index.vue";
 import StudentStatusRecordDate from "@/views/admin/studentStatusRecordDate/index.vue";
+import QuestionnaireManagement from "@/views/admin/questionnaireManagement/index.vue";
 import InternshipApplicationManagement from "@/views/admin/internshipApplicationManagement/index.vue";
+
 import TeamMemberManagement from "@/views/studentAdmin/teamMemberManagement/index.vue";
+
 import StudentLogin from '@/views/student/login/index.vue';
 import StudentHome from '@/views/student/home/index.vue';
 import StudentInternshipApplication from '@/views/student/internshipApplication/index.vue'
@@ -30,8 +34,10 @@ export const constantRoutes = [{path: '/', redirect: '/login', hidden: true},
         path: '/studentStatusRecord', name: 'StudentStatusRecord', component: StudentStatusRecord
     }, {
         path: '/studentStatusRecordDetail', name: 'StudentStatusRecordDetail', component: StudentStatusRecordDetail
-    }, , {
+    }, {
         path: '/studentStatusRecordDate', name: 'StudentStatusRecordDate', component: StudentStatusRecordDate
+    }, {
+        path: '/questionnaireManagement', name: 'QuestionnaireManagement', component: QuestionnaireManagement
     }, {
         path: '/internshipApplicationManagement',
         name: 'InternshipApplicationManagement',
