@@ -8,6 +8,7 @@ import StudentAdminManagement from "@/views/admin/studentAdminManagement/index.v
 import StudentStatusRecord from "@/views/admin/studentStatusRecord/index.vue";
 import StudentStatusRecordDetail from "@/views/admin/studentStatusRecordDetail/index.vue";
 import StudentStatusRecordDate from "@/views/admin/studentStatusRecordDate/index.vue";
+import QuestionnaireDetail from "@/views/admin/questionnaireDetail/index.vue";
 import QuestionnaireManagement from "@/views/admin/questionnaireManagement/index.vue";
 import InternshipApplicationManagement from "@/views/admin/internshipApplicationManagement/index.vue";
 
@@ -36,6 +37,8 @@ export const constantRoutes = [{path: '/', redirect: '/login', hidden: true},
         path: '/studentStatusRecordDetail', name: 'StudentStatusRecordDetail', component: StudentStatusRecordDetail
     }, {
         path: '/studentStatusRecordDate', name: 'StudentStatusRecordDate', component: StudentStatusRecordDate
+    }, {
+        path: '/questionnaireDetail', name: 'QuestionnaireDetail', component: QuestionnaireDetail
     }, {
         path: '/questionnaireManagement', name: 'QuestionnaireManagement', component: QuestionnaireManagement
     }, {

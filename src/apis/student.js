@@ -140,3 +140,29 @@ export function studentQueryListWithStudentAdminStudentStatusRecord(queryListWit
         }
     })
 }
+
+export function studentQueryPageWithQuestionnaireQuestion(queryPageWithQuestionnaireQuestionForm) {
+    return request({
+        url: '/student/queryPageWithQuestionnaireQuestion', method: 'GET', params: {
+            page: queryPageWithQuestionnaireQuestionForm.page,
+            pageSize: queryPageWithQuestionnaireQuestionForm.pageSize,
+            questionnaireId: queryPageWithQuestionnaireQuestionForm.questionnaireId,
+            classNumber: queryPageWithQuestionnaireQuestionForm.classNumber,
+            studentNumber: queryPageWithQuestionnaireQuestionForm.studentNumber,
+            name: queryPageWithQuestionnaireQuestionForm.name,
+        }
+    })
+}
+
+export function studentQueryListWithQuestionnaireQuestion(queryPageWithQuestionnaireQuestionForm) {
+    return request({
+        url: '/student/queryListWithQuestionnaireQuestion', method: 'GET', params: {
+            page: queryPageWithQuestionnaireQuestionForm.page,
+            pageSize: queryPageWithQuestionnaireQuestionForm.pageSize,
+            questionnaireId: queryPageWithQuestionnaireQuestionForm.questionnaireId,
+            classNumber: queryPageWithQuestionnaireQuestionForm.classNumber,
+            studentNumber: queryPageWithQuestionnaireQuestionForm.studentNumber,
+            name: queryPageWithQuestionnaireQuestionForm.name,
+        }
+    })
+}

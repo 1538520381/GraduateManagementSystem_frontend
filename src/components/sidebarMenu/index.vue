@@ -51,6 +51,11 @@ export default {
           userType: 'admin',
           url: '/studentStatusRecordDate'
         }, {
+          title: '问卷详情',
+          index: '7',
+          userType: 'admin',
+          url: '/questionnaireDetail'
+        }, {
           title: '问卷设置',
           index: '5',
           userType: 'admin',

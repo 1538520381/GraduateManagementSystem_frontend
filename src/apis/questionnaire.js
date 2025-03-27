@@ -31,3 +31,15 @@ export function questionnaireDeleteById(deleteByIdForm) {
         url: '/questionnaire/deleteById/' + deleteByIdForm.id, method: 'DELETE'
     })
 }
+
+export function questionnaireGetQuestionnaireNameList() {
+    return request({
+        url: '/questionnaire/getQuestionnaireNameList', method: 'GET'
+    })
+}
+
+export function questionnaireGetList() {
+    return request({
+        url: '/questionnaire/getList', method: 'GET'
+    })
+}
