@@ -186,7 +186,10 @@ import {
   studentAdminStudentStatusRecordGetStudentAdminStudentStatusRecordByStudentIdToNowWithStudentAdminStudentStatusRecordDate
 } from "@/apis/studentAdminStudentStatusRecord";
 import {questionnaireGetListWithStudentQuestionnaireAnswerByStudentId} from "@/apis/questionnaire";
-import {studentAdminStudentStatusRecordDateGetList} from "@/apis/studentAdminStudentStatusRecordDate";
+import {
+  studentAdminStudentStatusRecordDateGetById,
+  studentAdminStudentStatusRecordDateGetList
+} from "@/apis/studentAdminStudentStatusRecordDate";
 import XLSX from "xlsx";
 import {
   studentAdminStudentStatusRecordNameGetByStudentAdminStudentStatusrRecordDateId
@@ -348,7 +351,7 @@ export default {
       const workbook = XLSX.utils.book_new();
 
       let mainSheetData = [];
-      let columnName = ['学期', '周', '班级号', '学号', '姓名', '所属管理员', '是否在校', '离校原因', '离校去向'];
+      let columnName = ['学期', '周', '开始时间', '结束时间', '班级号', '学号', '姓名', '所属管理员', '是否在校', '离校原因', '离校去向'];
       mainSheetData.push(columnName)
 
       if (isEmpty(this.queryPageForm.semester) || isEmpty(this.queryPageForm.week)) {
@@ -356,65 +359,76 @@ export default {
         return
       }
 
-      studentAdminStudentStatusRecordNameGetByStudentAdminStudentStatusrRecordDateId({
-        studentAdminStudentStatusrRecordDateId: isEmpty(this.semesterAndWeekToIdDict[this.queryPageForm.semester + "Persolute" + this.queryPageForm.week]) ? -1 : this.semesterAndWeekToIdDict[this.queryPageForm.semester + "Persolute" + this.queryPageForm.week]
+      studentAdminStudentStatusRecordDateGetById({
+        id: isEmpty(this.semesterAndWeekToIdDict[this.queryPageForm.semester + "Persolute" + this.queryPageForm.week]) ? -1 : this.semesterAndWeekToIdDict[this.queryPageForm.semester + "Persolute" + this.queryPageForm.week]
       }).then((res) => {
+        let studentAdminStudentStatusRecordDate = res.data.studentAdminStudentStatusRecordDate
         if (res.data.code === 200) {
-          let studentAdminStudentStatusRecordNameList = res.data.studentAdminStudentStatusRecordNameList.sort((o1, o2) => {
-            return o1.sort - o2.sort;
-          })
-
-          for (let i = 0; i < studentAdminStudentStatusRecordNameList.length; i++) {
-            columnName.push(studentAdminStudentStatusRecordNameList[i].stem)
-          }
-
-          studentQueryListWithStudentAdminStudentStatusRecord({
-            semester: this.queryPageForm.semester,
-            week: this.queryPageForm.week,
-            studentNumber: isEmpty(this.queryPageForm.studentNumber) ? null : this.queryPageForm.studentNumber.trim(),
-            name: isEmpty(this.queryPageForm.name) ? null : this.queryPageForm.name.trim(),
-            classNumber: isEmpty(this.queryPageForm.classNumber) ? null : this.queryPageForm.classNumber.trim(),
+          studentAdminStudentStatusRecordNameGetByStudentAdminStudentStatusrRecordDateId({
+            studentAdminStudentStatusrRecordDateId: isEmpty(this.semesterAndWeekToIdDict[this.queryPageForm.semester + "Persolute" + this.queryPageForm.week]) ? -1 : this.semesterAndWeekToIdDict[this.queryPageForm.semester + "Persolute" + this.queryPageForm.week]
           }).then((res) => {
             if (res.data.code === 200) {
-              for (let i = 0; i < res.data.studentList.length; i++) {
-                let row = [
-                  this.queryPageForm.semester,
-                  this.queryPageForm.week,
-                  res.data.studentList[i].classNumber,
-                  res.data.studentList[i].studentNumber,
-                  res.data.studentList[i].name,
-                  (isEmpty(res.data.studentList[i].studentAdmin) ? '暂无分组' : res.data.studentList[i].studentAdmin.name),
-                  (isEmpty(res.data.studentList[i].studentAdminStudentStatusRecord) ? null : (res.data.studentList[i].studentAdminStudentStatusRecord.onCampusFlag ? '是' : '否')),
-                  (isEmpty(res.data.studentList[i].studentAdminStudentStatusRecord) ? null : res.data.studentList[i].studentAdminStudentStatusRecord.leavingSchoolReason),
-                  (isEmpty(res.data.studentList[i].studentAdminStudentStatusRecord) ? null : res.data.studentList[i].studentAdminStudentStatusRecord.leavingSchoolDestination)
-                ]
+              let studentAdminStudentStatusRecordNameList = res.data.studentAdminStudentStatusRecordNameList.sort((o1, o2) => {
+                return o1.sort - o2.sort;
+              })
 
-                for (let j = 0; j < studentAdminStudentStatusRecordNameList.length; j++) {
-                  row.push((isEmpty(res.data.studentList[i].studentAdminStudentStatusRecord) ? null : res.data.studentList[i].studentAdminStudentStatusRecord['problem' + (j + 1)]))
-                }
-
-                mainSheetData.push(row)
+              for (let i = 0; i < studentAdminStudentStatusRecordNameList.length; i++) {
+                columnName.push(studentAdminStudentStatusRecordNameList[i].stem)
               }
-              const mainSheet = XLSX.utils.aoa_to_sheet(mainSheetData);
 
-              XLSX.utils.book_append_sheet(workbook, mainSheet, "主表");
+              studentQueryListWithStudentAdminStudentStatusRecord({
+                semester: this.queryPageForm.semester,
+                week: this.queryPageForm.week,
+                studentNumber: isEmpty(this.queryPageForm.studentNumber) ? null : this.queryPageForm.studentNumber.trim(),
+                name: isEmpty(this.queryPageForm.name) ? null : this.queryPageForm.name.trim(),
+                classNumber: isEmpty(this.queryPageForm.classNumber) ? null : this.queryPageForm.classNumber.trim(),
+              }).then((res) => {
+                if (res.data.code === 200) {
+                  for (let i = 0; i < res.data.studentList.length; i++) {
+                    let row = [
+                      this.queryPageForm.semester,
+                      this.queryPageForm.week,
+                      formatTimestamp(studentAdminStudentStatusRecordDate.startTime),
+                      formatTimestamp(studentAdminStudentStatusRecordDate.endTime),
+                      res.data.studentList[i].classNumber,
+                      res.data.studentList[i].studentNumber,
+                      res.data.studentList[i].name,
+                      (isEmpty(res.data.studentList[i].studentAdmin) ? '暂无分组' : res.data.studentList[i].studentAdmin.name),
+                      (isEmpty(res.data.studentList[i].studentAdminStudentStatusRecord) ? null : (res.data.studentList[i].studentAdminStudentStatusRecord.onCampusFlag ? '是' : '否')),
+                      (isEmpty(res.data.studentList[i].studentAdminStudentStatusRecord) ? null : res.data.studentList[i].studentAdminStudentStatusRecord.leavingSchoolReason),
+                      (isEmpty(res.data.studentList[i].studentAdminStudentStatusRecord) ? null : res.data.studentList[i].studentAdminStudentStatusRecord.leavingSchoolDestination)
+                    ]
 
-              XLSX.writeFile(workbook, "学生状态信息表.xlsx");
+                    for (let j = 0; j < studentAdminStudentStatusRecordNameList.length; j++) {
+                      row.push((isEmpty(res.data.studentList[i].studentAdminStudentStatusRecord) ? null : res.data.studentList[i].studentAdminStudentStatusRecord['problem' + (j + 1)]))
+                    }
+
+                    mainSheetData.push(row)
+                  }
+                  const mainSheet = XLSX.utils.aoa_to_sheet(mainSheetData);
+
+                  XLSX.utils.book_append_sheet(workbook, mainSheet, "主表");
+
+                  XLSX.writeFile(workbook, "学生状态信息表.xlsx");
+                } else {
+                  console.log(res)
+                  this.$message.error(res.data.msg)
+                }
+              }).catch((err) => {
+                console.log(err)
+                this.$message.error("服务器异常，请联系管理员")
+              })
+
             } else {
-              console.log(res)
               this.$message.error(res.data.msg)
             }
           }).catch((err) => {
             console.log(err)
             this.$message.error("服务器异常，请联系管理员")
           })
-
         } else {
-          this.$message.error(res.data.msg)
+
         }
-      }).catch((err) => {
-        console.log(err)
-        this.$message.error("服务器异常，请联系管理员")
       })
     },
     getStudentAdminStudentStatusRecordNameByStudentAdminStudentStatusrRecordDateId(studentAdminStudentStatusrRecordDateId) {

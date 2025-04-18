@@ -38,3 +38,9 @@ export function studentAdminStudentStatusRecordDateAdd(addForm) {
         }
     })
 }
+
+export function studentAdminStudentStatusRecordDateGetById(getByIdForm) {
+    return request({
+        url: '/studentAdminStudentStatusRecordDate/getById/' + getByIdForm.id, method: 'GET'
+    })
+}
