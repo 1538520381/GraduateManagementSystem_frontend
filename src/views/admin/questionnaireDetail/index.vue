@@ -64,22 +64,14 @@ import Header from "@/components/header/index.vue";
 import {formatTimestamp, formatTimestampWithoutTime, isEmpty} from "@/utils/common";
 import {
   studentGetClassNumberList, studentQueryListWithQuestionnaireQuestion,
-  studentQueryListWithStudentAdminStudentStatusRecord,
   studentQueryPageWithQuestionnaireQuestion,
-  studentQueryPageWithStudentAdmin,
   studentQueryPageWithStudentAdminStudentStatusRecord
 } from "@/apis/student";
 import {adminGetAdminByToken} from "@/apis/admin";
 import {
-  studentAdminStudentStatusRecordGetStudentAdminStudentStatusRecordByStudentIdToNowWithStudentAdminStudentStatusRecordDate
-} from "@/apis/studentAdminStudentStatusRecord";
-import {
-  questionnaireGetList,
-  questionnaireGetListWithStudentQuestionnaireAnswerByStudentId,
-  questionnaireGetQuestionnaireNameList
+  questionnaireGetList
 } from "@/apis/questionnaire";
 import {studentAdminStudentStatusRecordDateGetList} from "@/apis/studentAdminStudentStatusRecordDate";
-import XLSX from "xlsx";
 import {
   studentAdminStudentStatusRecordNameGetByStudentAdminStudentStatusrRecordDateId
 } from "@/apis/studentAdminStudentStatusRecordName";

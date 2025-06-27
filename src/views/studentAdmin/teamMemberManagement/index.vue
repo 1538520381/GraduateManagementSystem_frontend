@@ -692,6 +692,9 @@ export default {
       studentAdminStudentStatusRecordGetStudentAdminStudentStatusRecordByStudentIdToNowWithStudentAdminStudentStatusRecordDate({studentId: studentId}).then((res) => {
         if (res.data.code === 200) {
           this.studentStatusRecord.studentStatusRecords = res.data.withStudentAdminStudentStatusRecordDateVOList
+          this.studentStatusRecord.studentStatusRecords.sort((o1, o2) => {
+            return o1.studentAdminStudentStatusRecordDate.startTime - o2.studentAdminStudentStatusRecordDate.startTime
+          })
           if (!isEmpty(this.studentStatusRecord.studentStatusRecords)) {
             this.studentStatusRecord.semesterList = []
             for (let i = 0; i < this.studentStatusRecord.studentStatusRecords.length; i++) {

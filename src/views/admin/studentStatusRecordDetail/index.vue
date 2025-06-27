@@ -285,6 +285,9 @@ export default {
       return studentAdminStudentStatusRecordDateGetList().then((res) => {
         this.studentAdminStudentStatusRecordDateDict = {}
         if (res.data.code === 200) {
+          res.data.studentAdminStudentStatusRecordDateList.sort((o1, o2) => {
+            return o1.startTime - o2.startTime
+          })
           for (let i = 0; i < res.data.studentAdminStudentStatusRecordDateList.length; i++) {
             if (isEmpty(this.studentAdminStudentStatusRecordDateDict[res.data.studentAdminStudentStatusRecordDateList[i].semester])) {
               this.studentAdminStudentStatusRecordDateDict[res.data.studentAdminStudentStatusRecordDateList[i].semester] = []
